@@ -1,0 +1,26 @@
+# Dependencias y salida
+node_modules/
+dist/
+.astro/
+
+# Informes de pruebas (se suben como artefactos de la CI, no al repositorio)
+informes/
+.lighthouseci/
+test-results/
+playwright-report/
+
+# Archivos de trabajo de las skills
+.taste-skill/
+
+# Secretos y ajustes locales: este proyecto no usa ninguno, pero nunca se suben
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+*.pem
+*.key
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
