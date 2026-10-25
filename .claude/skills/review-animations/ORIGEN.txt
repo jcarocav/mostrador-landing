@@ -1,0 +1,5 @@
+Origen: https://github.com/emilkowalski/skills (carpeta skills/review-animations)
+Commit: 2d228630ba1446365f614a108cb8252f1feda202
+Copiado: 2026-10-25
+Licencia: MIT (archivo LICENSE de esta carpeta)
+Revisión: solo Markdown, sin scripts ni llamadas a servicios externos.

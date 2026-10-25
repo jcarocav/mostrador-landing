@@ -1,0 +1,84 @@
+/* Tokens del tema. Los colores vienen solo de las escalas de src/marca/marca.ts (--marca-*,
+   --exito-*, --neutro-*); los componentes usan estos nombres de rol, nunca valores fijos. */
+:root {
+  color-scheme: light;
+
+  --color-fondo: var(--neutro-50);
+  --color-superficie: #ffffff;
+  --color-texto: var(--neutro-900);
+  --color-texto-suave: var(--neutro-600);
+  --color-accion: var(--marca-600);
+  --color-accion-encima: var(--marca-700);
+  --color-accion-texto: #ffffff;
+  --color-foco: var(--marca-500);
+  /* Verde: solo cobrar y éxito. */
+  --color-cobrar: var(--exito-600);
+  --color-cobrar-texto: #ffffff;
+
+  --fuente: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --margen: clamp(16px, 4vw, 48px);
+  --ancho-max: 1200px;
+
+  /* Movimiento (emil-design-eng): curvas fuertes y duraciones cortas, sin rebotes. */
+  --curva-salida: cubic-bezier(0.23, 1, 0.32, 1);
+  --curva-entrada-salida: cubic-bezier(0.77, 0, 0.175, 1);
+  --duracion-presion: 160ms;
+  --duracion-ui: 220ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Con movimiento reducido la página queda completa y quieta. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
