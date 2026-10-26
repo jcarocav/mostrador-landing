@@ -1,0 +1,27 @@
+---
+import { marca, variablesCss } from '../marca/marca';
+import '../estilos/global.css';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+}
+
+const { titulo = `${marca.nombre} · ${marca.lema}`, descripcion = marca.descripcion } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="theme-color" content={marca.colores.marca[600]} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style is:inline set:html={variablesCss} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
