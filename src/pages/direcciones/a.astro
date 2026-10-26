@@ -1,0 +1,683 @@
+---
+// Dirección A · Comprobante claro. Prototipo de la Fase 1: portada + «Empieza fácil».
+import '@fontsource-variable/plus-jakarta-sans/wght.css';
+import jakarta from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
+import ventaVacia from '../../assets/app/venta-vacia-celular.png';
+import ventaCarrito from '../../assets/app/venta-carrito-celular.png';
+import cobroVuelto from '../../assets/app/cobro-vuelto-celular.png';
+import comprobante from '../../assets/app/comprobante-whatsapp-celular.png';
+import Etiqueta from '../../componentes/Etiqueta.astro';
+import Telefono from '../../componentes/Telefono.astro';
+import { ventaDemo } from '../../config/demo';
+import { formatoPesos } from '../../config/precios';
+import Base from '../../layouts/Base.astro';
+import { marca } from '../../marca/marca';
+import { textos } from '../../textos/textos';
+
+const t = textos.portada;
+const e = textos.empiezaFacil;
+const imagenesPasos = [ventaCarrito, cobroVuelto, comprobante];
+const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPasos[i], alt: p.alt }));
+---
+
+<Base titulo={`${textos.direcciones.a.nombre} · ${marca.nombre}`} indexar={false} precargar={[jakarta]}>
+  <div class="dir-a">
+    <header class="barra marco">
+      <a class="marca" href="/direcciones/" aria-label={textos.logoAlt}>
+        <span class="logo" set:html={marca.logoSvg} />
+        <span>{marca.nombre}</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a class="nav-enlace" href="#empieza">{textos.nav.comoFunciona}</a>
+        <a class="boton boton-primario boton-chico" href="#prueba">{textos.nav.accion}</a>
+      </nav>
+    </header>
+
+    <main id="contenido">
+      <section class="portada marco" aria-labelledby="titulo-portada">
+        <h1 id="titulo-portada">Tu inventario,<br class="solo-celular" /> tus ventas,<br /> tu negocio.</h1>
+        <div class="portada-cuerpo">
+          <div class="portada-texto">
+            <p class="subtitulo">{t.subtitulo}</p>
+            <div class="acciones">
+              <a class="boton boton-primario" href="#prueba">{t.botonPrueba}</a>
+              <a class="boton boton-secundario" href="#arma-tu-plan">{t.botonPlan}</a>
+            </div>
+          </div>
+
+          <div class="portada-escena" data-escena data-productos={JSON.stringify(ventaDemo.productos)}>
+            {
+              ventaDemo.productos.map((p, i) => (
+                <Etiqueta nombre={p.nombre} precio={p.precio} barras={p.barras} indice={i} class={`etq etq-${i}`} />
+              ))
+            }
+            <Telefono
+              class="portada-telefono"
+              prioridad
+              cargarTodas
+              activa={1}
+              tamanos="(min-width: 1024px) 300px, 56vw"
+              pantallas={[
+                { id: 'vacia', src: ventaVacia, alt: t.altVentaVacia },
+                { id: 'carrito', src: ventaCarrito, alt: t.altVentaCarrito },
+              ]}
+            />
+            <div class="ticket">
+              <p class="ticket-titulo">{t.comprobante}</p>
+              <ul class="ticket-lineas">
+                {
+                  ventaDemo.productos.map((p) => (
+                    <li data-linea>
+                      <span>{p.nombre}</span>
+                      <span class="cifra">{formatoPesos(p.precio)}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <p class="ticket-total">
+                <span>{t.total}</span>
+                <strong class="cifra" data-total>{formatoPesos(ventaDemo.total)}</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="empieza" class="empieza" aria-labelledby="titulo-empieza" data-empieza>
+        <div class="marco">
+          <div class="empieza-encabezado">
+            <h2 id="titulo-empieza">{e.titulo}</h2>
+            <p>{e.bajada}</p>
+          </div>
+          <div class="empieza-cuerpo">
+            <div class="empieza-fijo">
+              <Telefono class="empieza-telefono" decorativo pantallas={pantallasPasos} tamanos="(min-width: 1024px) 320px, 44vw" />
+            </div>
+            <ol class="pasos">
+              {
+                e.pasos.map((p, i) => (
+                  <li class:list={['paso', { activo: i === 0 }]} data-paso={i}>
+                    <div class="paso-texto">
+                      <h3>{p.titulo}</h3>
+                      <p>{p.texto}</p>
+                    </div>
+                    <Telefono class="paso-telefono" pantallas={[pantallasPasos[i]]} tamanos="(min-width: 1024px) 280px, 64vw" />
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pie marco">
+      <p>{textos.pie.derechos(new Date().getFullYear())}</p>
+    </footer>
+  </div>
+</Base>
+
+<style is:global>
+  .dir-a {
+    --fuente: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --color-fondo: var(--neutro-100);
+    --color-superficie: #ffffff;
+    --color-texto: var(--neutro-900);
+    --color-texto-suave: var(--neutro-600);
+    --color-campo: var(--marca-50);
+
+    font-family: var(--fuente);
+    background: var(--color-fondo);
+    color: var(--color-texto);
+  }
+
+  .dir-a .cifra {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dir-a .ficha-vuelo {
+    position: absolute;
+    z-index: 5;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--marca-600);
+    color: var(--color-accion-texto);
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+</style>
+
+<style>
+  .marco {
+    width: 100%;
+    max-width: 1344px;
+    margin-inline: auto;
+    padding-inline: var(--margen);
+  }
+
+  /* Barra */
+  .barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 16px;
+  }
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: var(--color-texto);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .logo {
+    width: 32px;
+    color: var(--color-accion);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-enlace {
+    display: none;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 14px;
+    color: var(--color-texto);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (min-width: 720px) {
+    .nav-enlace {
+      display: inline-flex;
+    }
+  }
+
+  /* Botones: planos, de borde completamente redondo, con respuesta al presionar. */
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding-inline: 28px;
+    border-radius: 999px;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      transform var(--duracion-presion) var(--curva-salida),
+      background-color var(--duracion-presion) ease;
+  }
+
+  .boton:active {
+    transform: scale(0.97);
+  }
+
+  .boton-chico {
+    min-height: 44px;
+    padding-inline: 20px;
+    font-size: 1rem;
+  }
+
+  .boton-primario {
+    background: var(--color-accion);
+    color: var(--color-accion-texto);
+  }
+
+  .boton-secundario {
+    background: var(--neutro-200);
+    color: var(--color-texto);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .boton-primario:hover {
+      background: var(--color-accion-encima);
+    }
+
+    .boton-secundario:hover {
+      background: var(--neutro-300);
+    }
+  }
+
+  /* Portada */
+  .portada {
+    padding-block: clamp(24px, 6vh, 72px) clamp(48px, 8vh, 96px);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 6.6vw, 6.25rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .portada-cuerpo {
+    display: grid;
+    gap: 40px;
+    margin-top: clamp(28px, 4vw, 56px);
+  }
+
+  .subtitulo {
+    max-width: 34ch;
+    margin: 0;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.5;
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  /* Celular: etiquetas arriba, el teléfono al centro y el comprobante encima de su borde inferior. */
+  .portada-escena {
+    --ancho-telefono: min(60vw, 260px);
+    --ancho-etiqueta: 100%;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .portada-escena :global(.portada-telefono) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 8px;
+  }
+
+  .ticket {
+    grid-column: 1 / -1;
+    position: relative;
+    z-index: 2;
+    width: min(100%, 320px);
+    justify-self: end;
+    margin-top: -88px;
+    padding: 18px 18px 20px;
+    border-radius: 6px;
+    background: var(--color-superficie);
+    outline: 4px solid var(--color-fondo);
+  }
+
+  .ticket p,
+  .ticket ul {
+    margin: 0;
+  }
+
+  .ticket-titulo {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-texto-suave);
+  }
+
+  .ticket .ticket-lineas {
+    display: grid;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 0;
+    list-style: none;
+    font-size: 1rem;
+  }
+
+  .ticket-lineas li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ticket .ticket-total {
+    display: grid;
+    gap: 2px;
+    margin-top: 18px;
+  }
+
+  .ticket-total span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+  }
+
+  .ticket-total strong {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  /* PC: la escena sube junto a la segunda línea del título, que es corta. */
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5.75rem);
+    }
+
+    .portada-cuerpo {
+      grid-template-columns: 5fr 7fr;
+      align-items: start;
+    }
+
+    .portada-escena {
+      --ancho-telefono: 270px;
+      --ancho-etiqueta: 200px;
+      display: block;
+      height: 600px;
+      margin-top: -104px;
+    }
+
+    .portada-escena :global(.portada-telefono) {
+      position: absolute;
+      top: 0;
+      left: 46%;
+      margin: 0;
+      transform: translateX(-50%);
+    }
+
+    .portada-escena :global(.etq) {
+      position: absolute;
+      left: 0;
+    }
+
+    .portada-escena :global(.etq-0) {
+      top: 12%;
+    }
+
+    .portada-escena :global(.etq-1) {
+      top: 42%;
+    }
+
+    .ticket {
+      position: absolute;
+      right: 0;
+      top: 34%;
+      width: 260px;
+      margin: 0;
+      outline: none;
+    }
+  }
+
+  /* Estados de la animación de la portada (solo con movimiento y JavaScript). */
+  :global(.js-movimiento) .portada-escena :global([data-estado]) {
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  :global(.js-movimiento) .portada-escena :global(.escaneada [data-estado]) {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) .portada-escena [data-linea] {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 220ms var(--curva-salida),
+      transform 220ms var(--curva-salida);
+  }
+
+  :global(.js-movimiento) .portada-escena [data-linea].visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(.js-movimiento) .portada-escena [data-total] {
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  :global(.js-movimiento) .portada-escena.contando [data-total] {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) .portada-escena :global(.pantalla) {
+    transition:
+      opacity 240ms ease,
+      filter 240ms ease;
+  }
+
+  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='carrito']) {
+    opacity: 0;
+  }
+
+  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='vacia']) {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) .portada-escena.terminada :global(.pantalla[data-pantalla='vacia']) {
+    opacity: 0;
+    filter: blur(2px);
+  }
+
+  /* Empieza fácil */
+  .empieza {
+    padding-block: clamp(72px, 12vw, 160px);
+    background: var(--color-campo);
+  }
+
+  .empieza-encabezado h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .empieza-encabezado p {
+    max-width: 40ch;
+    margin: 16px 0 0;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  }
+
+  .empieza-cuerpo {
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+
+  .empieza-fijo {
+    display: none;
+  }
+
+  .pasos {
+    display: grid;
+    gap: 56px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paso {
+    display: grid;
+    gap: 24px;
+    justify-items: start;
+  }
+
+  .paso h3 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .paso p {
+    max-width: 36ch;
+    margin: 10px 0 0;
+    font-size: 1.125rem;
+  }
+
+  .paso :global(.paso-telefono) {
+    --ancho-telefono: min(64vw, 280px);
+  }
+
+  @media (min-width: 1024px) {
+    .paso {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 64px;
+    }
+  }
+
+  /* Con movimiento: el celular queda fijo y los pasos cambian su pantalla. */
+  :global(.js-movimiento) .empieza-cuerpo {
+    display: grid;
+    position: relative;
+  }
+
+  :global(.js-movimiento) .empieza-fijo {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 12px;
+    z-index: 2;
+    padding-block: 8px 16px;
+    background: var(--color-campo);
+  }
+
+  :global(.js-movimiento) .empieza-fijo :global(.empieza-telefono) {
+    --ancho-telefono: min(44vw, 210px);
+  }
+
+  :global(.js-movimiento) .empieza-fijo :global(.pantalla) {
+    transition: opacity 240ms ease;
+  }
+
+  :global(.js-movimiento) .paso :global(.paso-telefono) {
+    display: none;
+  }
+
+  :global(.js-movimiento) .paso {
+    position: relative;
+    min-height: 52vh;
+    align-content: start;
+    padding-left: 20px;
+    color: var(--color-texto-suave);
+    transition: color 200ms ease;
+  }
+
+  :global(.js-movimiento) .paso-texto {
+    position: relative;
+  }
+
+  :global(.js-movimiento) .paso-texto::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    width: 4px;
+    height: 2.2em;
+    border-radius: 2px;
+    background: var(--color-accion);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 220ms var(--curva-salida);
+  }
+
+  :global(.js-movimiento) .paso.activo {
+    color: var(--color-texto);
+  }
+
+  :global(.js-movimiento) .paso.activo .paso-texto::before {
+    transform: scaleY(1);
+  }
+
+  @media (min-width: 1024px) {
+    :global(.js-movimiento) .empieza-cuerpo {
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    :global(.js-movimiento) .empieza-fijo {
+      top: max(24px, calc(50vh - 340px));
+      padding: 0;
+    }
+
+    :global(.js-movimiento) .empieza-fijo :global(.empieza-telefono) {
+      --ancho-telefono: 300px;
+    }
+
+    :global(.js-movimiento) .paso {
+      min-height: 72vh;
+      align-content: center;
+      padding-left: 28px;
+    }
+
+    :global(.js-movimiento) .paso-texto::before {
+      left: -28px;
+    }
+  }
+
+  .pie {
+    padding-block: 40px;
+    color: var(--color-texto-suave);
+  }
+</style>
+
+<script>
+  import { alAparecer, cancelarRespaldo, contar, esperar, hayMovimiento, leer, pesos, vuelo } from '../../scripts/movimiento';
+
+  type Producto = { nombre: string; precio: number };
+
+  async function portada(escena: HTMLElement) {
+    const productos: Producto[] = JSON.parse(escena.dataset.productos ?? '[]');
+    const total = escena.querySelector<HTMLElement>('[data-total]')!;
+    const pantalla = escena.querySelector<HTMLElement>('.telefono-pantalla')!;
+    const lineas = escena.querySelectorAll<HTMLElement>('[data-linea]');
+
+    total.textContent = pesos(0);
+    await document.fonts?.ready;
+    await esperar(200);
+    escena.classList.add('contando');
+
+    let suma = 0;
+    for (const [i, p] of productos.entries()) {
+      const etiqueta = escena.querySelector<HTMLElement>(`[data-etiqueta="${i}"]`)!;
+      await leer(etiqueta);
+      etiqueta.classList.add('escaneada');
+      await vuelo(etiqueta, pantalla, escena, `${p.nombre} · ${pesos(p.precio)}`);
+      lineas[i]?.classList.add('visible');
+      await contar(total, suma, suma + p.precio);
+      suma += p.precio;
+      await esperar(140);
+    }
+    escena.classList.add('terminada');
+  }
+
+  function empieza(seccion: HTMLElement) {
+    const pasos = [...seccion.querySelectorAll<HTMLElement>('[data-paso]')];
+    const pantallas = [...seccion.querySelectorAll<HTMLElement>('.empieza-fijo .pantalla')];
+    const activar = (i: number) => {
+      pasos.forEach((p, j) => p.classList.toggle('activo', j === i));
+      pantallas.forEach((p, j) => p.classList.toggle('activa', j === i));
+    };
+    // El paso activo es el que cruza la franja de lectura: el centro en PC, bajo el celular en el teléfono.
+    const franja = window.matchMedia('(min-width: 1024px)').matches ? '-45% 0px -45% 0px' : '-68% 0px -22% 0px';
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (entrada.isIntersecting) activar(pasos.indexOf(entrada.target as HTMLElement));
+        }
+      },
+      { rootMargin: franja },
+    );
+    pasos.forEach((p) => observador.observe(p));
+  }
+
+  if (hayMovimiento()) {
+    cancelarRespaldo();
+    const escena = document.querySelector<HTMLElement>('[data-escena]');
+    if (escena) alAparecer(escena, () => portada(escena));
+    const seccion = document.querySelector<HTMLElement>('[data-empieza]');
+    if (seccion) empieza(seccion);
+  }
+</script>

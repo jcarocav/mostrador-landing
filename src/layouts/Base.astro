@@ -1,13 +1,25 @@
 ---
 import { marca, variablesCss } from '../marca/marca';
+import { textos } from '../textos/textos';
 import '../estilos/global.css';
 
 interface Props {
   titulo?: string;
   descripcion?: string;
+  /** false en páginas de trabajo (como las direcciones visuales) que no deben salir en buscadores. */
+  indexar?: boolean;
+  /** Fuentes que conviene precargar porque las usa el título de la portada. */
+  precargar?: string[];
+  colorTema?: string;
 }
 
-const { titulo = `${marca.nombre} · ${marca.lema}`, descripcion = marca.descripcion } = Astro.props;
+const {
+  titulo = `${marca.nombre} · ${marca.lema}`,
+  descripcion = marca.descripcion,
+  indexar = true,
+  precargar = [],
+  colorTema = marca.colores.marca[600],
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -17,11 +29,48 @@ const { titulo = `${marca.nombre} · ${marca.lema}`, descripcion = marca.descrip
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
-    <meta name="theme-color" content={marca.colores.marca[600]} />
+    {!indexar && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content={colorTema} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {precargar.map((url) => <link rel="preload" href={url} as="font" type="font/woff2" crossorigin />)}
     <style is:inline set:html={variablesCss} />
+    <!--
+      Con movimiento permitido y JavaScript, la página arranca en el estado inicial de las animaciones
+      (.js-movimiento). Si el script no llega a empezar en 4 segundos, se quita la clase y todo queda a la
+      vista: el contenido nunca se queda escondido.
+    -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js-movimiento');
+        window.__respaldoMovimiento = setTimeout(function () {
+          d.classList.remove('js-movimiento');
+        }, 4000);
+      })();
+    </script>
   </head>
   <body>
+    <a class="saltar" href="#contenido">{textos.saltarAlContenido}</a>
     <slot />
   </body>
 </html>
+
+<style>
+  .saltar {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--color-texto);
+    color: var(--color-fondo);
+    font-weight: 600;
+    transform: translateY(-200%);
+  }
+
+  .saltar:focus-visible {
+    transform: none;
+  }
+</style>

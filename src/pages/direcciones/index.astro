@@ -1,0 +1,65 @@
+---
+// Índice de trabajo de la Fase 1: no se indexa y se borra cuando el dueño elige una dirección.
+import Base from '../../layouts/Base.astro';
+import { marca } from '../../marca/marca';
+import { textos } from '../../textos/textos';
+
+const d = textos.direcciones;
+---
+
+<Base titulo={`${d.titulo} · ${marca.nombre}`} indexar={false}>
+  <main id="contenido" class="indice">
+    <h1>{d.titulo}</h1>
+    <p>{d.bajada}</p>
+    <ul>
+      <li>
+        <a href="/direcciones/a/">{d.a.nombre}</a>
+        <span>{d.a.texto}</span>
+      </li>
+      <li>
+        <a href="/direcciones/b/">{d.b.nombre}</a>
+        <span>{d.b.texto}</span>
+      </li>
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .indice {
+    max-width: 720px;
+    margin-inline: auto;
+    padding: 64px var(--margen);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.03em;
+  }
+
+  ul {
+    display: grid;
+    gap: 16px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    gap: 4px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-accion);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  span {
+    color: var(--color-texto-suave);
+  }
+</style>

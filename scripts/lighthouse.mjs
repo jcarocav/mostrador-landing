@@ -3,13 +3,13 @@
 // defecto: pantalla chica, CPU 4x más lenta y red 4G lenta). Corre 3 veces cada página, toma la
 // mediana de rendimiento y falla si un puntaje queda bajo el mínimo. Los informes quedan en
 // informes/lighthouse/ y nunca se suben a ningún servidor.
-import { createServer } from 'node:http';
-import { createReadStream, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
-import { extname, join, resolve } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import * as chromeLauncher from 'chrome-launcher';
 import lighthouse from 'lighthouse';
+import { nombreDePagina, servirDist } from './lib/servidor.mjs';
 
-const PAGINAS = ['/'];
+const PAGINAS = ['/', '/direcciones/', '/direcciones/a/', '/direcciones/b/'];
 const CORRIDAS = 3;
 // error = detiene la CI; aviso = solo se informa.
 const MINIMOS = {
@@ -19,32 +19,9 @@ const MINIMOS = {
   seo: { minimo: 0.9, nivel: 'aviso' },
 };
 
-const DIST = resolve('dist');
 const SALIDA = resolve('informes/lighthouse');
-if (!existsSync(DIST)) {
-  console.error('No existe dist/. Corre antes «npm run build».');
-  process.exit(2);
-}
 mkdirSync(SALIDA, { recursive: true });
-
-const TIPOS = {
-  '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.avif': 'image/avif',
-  '.woff2': 'font/woff2', '.json': 'application/json', '.ico': 'image/x-icon', '.txt': 'text/plain',
-};
-
-// Servidor estático mínimo y sin compresión: el hosting aún no está elegido, así que se mide el
-// peor caso (con gzip o brotli el puntaje real solo puede subir).
-const servidor = createServer((req, res) => {
-  let ruta = join(DIST, decodeURIComponent(new URL(req.url, 'http://x').pathname));
-  if (!ruta.startsWith(DIST)) return res.writeHead(403).end();
-  if (existsSync(ruta) && statSync(ruta).isDirectory()) ruta = join(ruta, 'index.html');
-  if (!existsSync(ruta)) return res.writeHead(404).end();
-  res.writeHead(200, { 'Content-Type': TIPOS[extname(ruta)] ?? 'application/octet-stream' });
-  createReadStream(ruta).pipe(res);
-});
-await new Promise((r) => servidor.listen(0, '127.0.0.1', r));
-const base = `http://127.0.0.1:${servidor.address().port}`;
+const { base, cerrar } = await servirDist();
 
 const chrome = await chromeLauncher.launch({
   chromeFlags: ['--headless=new', '--disable-gpu', ...(process.env.CI ? ['--no-sandbox'] : [])],
@@ -62,7 +39,7 @@ try {
     }
     const puntaje = (r, c) => r.lhr.categories[c].score;
     const elegida = corridas.find((r) => puntaje(r, 'performance') === mediana(corridas.map((r) => puntaje(r, 'performance'))));
-    const nombre = pagina === '/' ? 'inicio' : pagina.replace(/\W+/g, '-').replace(/^-|-$/g, '');
+    const nombre = nombreDePagina(pagina);
     writeFileSync(join(SALIDA, `${nombre}.html`), elegida.report);
 
     const m = elegida.lhr.audits;
@@ -80,7 +57,7 @@ try {
   }
 } finally {
   chrome.kill();
-  servidor.close();
+  cerrar();
 }
 
 console.log(`\nInformes en ${SALIDA}`);

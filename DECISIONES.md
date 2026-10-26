@@ -82,3 +82,70 @@ comprobar se marca **NO VERIFICADO**.
 - `src/textos/textos.ts`: todos los textos visibles.
 - Astro trae telemetría activada por defecto: se apagó en este PC (`astro telemetry disable`) y en la
   CI (`ASTRO_TELEMETRY_DISABLED`).
+
+## 7 · 2026-10-25 · Stack aprobado por el dueño
+
+- Astro 7.4.2, GSAP 3.15.0 con ScrollTrigger y Lenis 1.3.27, con versión exacta. Se instalan en la
+  Fase 1 junto con las fuentes autoalojadas (`@fontsource-variable`, licencia OFL 1.1): Plus Jakarta Sans
+  (la fuente de la app) y Bricolage Grotesque (solo para probarla en la dirección B).
+
+## 8 · 2026-10-25 · taste-skill: solo el SKILL.md, y nuestras reglas mandan
+
+- **Decisión del dueño:** se instala solo `SKILL.md` (sin `scripts/`, `references/`, `library/` ni
+  `assets/`). Copia idéntica a la oficial, commit `12af471f627f866411b4bd785b19646d3672784c`, con
+  `LICENSE` y `ORIGEN.txt`. Las capturas las hace `scripts/capturas.mjs`.
+- **Qué hacía `taskkill` (para el registro):** `scripts/lib/cdp.mjs` corre
+  `taskkill /pid <pid> /T /F` con el **PID del Chrome que el mismo script abrió**. No cierra los Chrome
+  por nombre. `/T` cierra también los procesos hijos de ese Chrome y `/F` lo fuerza. El único riesgo,
+  muy improbable, es que Windows hubiera reasignado ese número de proceso a otro programa si ese Chrome
+  ya se había cerrado. Aparte, `sweepProfiles()` solo borra carpetas de perfil temporales que dejó una
+  corrida anterior (las suyas, marcadas con un archivo de dueño) y no cierra procesos.
+- **Precedencia:** nuestra paleta manda sobre taste-skill (índigo principal, verde solo para cobrar y
+  éxito, aunque la skill prohíbe el violeta y el índigo). Cuando una regla de la skill choca con los
+  criterios del documento del dueño (movimientos de menos de un segundo, sin rebotes, pantallas reales
+  de la app), mandan los criterios del documento. Queda escrito en `CLAUDE.md`.
+
+## 9 · 2026-10-25 · Protección de `main`
+
+- **Configurada (protección clásica de rama):** exige el check `verificar` de GitHub Actions (es el
+  trabajo que corre la CI completa), con la rama al día (`strict`); exige PR para todo cambio, con 0
+  aprobaciones porque el dueño trabaja solo; aplica también a los administradores; prohíbe push forzado
+  y borrar `main`.
+- **Comprobada el 2026-10-25:**
+  - push directo a `main`: rechazado (`GH006 Protected branch update failed`);
+  - PR con la CI **en curso**: la API de GitHub rechazó la fusión con la cuenta de administrador
+    (`Required status check "verificar" is in progress`, HTTP 405);
+  - PR con la CI **en rojo** (axe marcó `image-alt` crítico): rechazado
+    (`Required status check "verificar" is failing`);
+  - PR cuya CI corrió **antes** de que `main` avanzara: rechazado
+    (`Required status check "verificar" is expected`): hay que poner la rama al día y repetir la CI.
+- **Lo que no bloquea (aprendido a la mala):** un PR que aparece «atrasado» respecto de `main` pero
+  cuya CI se lanzó cuando `main` ya estaba en su último commit se considera al día, porque la CI de un
+  PR prueba la fusión con el `main` vigente. Así se fusionó por error el PR 3 de prueba: dejó en `main`
+  un archivo de texto, que el PR 4 quitó con el OK del dueño. No entró nada más.
+- Los PR de prueba 2 y 5 se cerraron sin fusionar y sus ramas se borraron.
+
+## 10 · 2026-10-25 · Fase 1: dos direcciones como prototipos navegables
+
+- Las dos direcciones se construyeron como páginas reales (`/direcciones/a/` y `/direcciones/b/`,
+  con `noindex`) para ver el movimiento de verdad, no solo imágenes. Cuando el dueño elija, la otra se
+  borra y la elegida pasa a ser la portada.
+- **Capturas reales de la app:** cuatro pantallas de `mostrador-dev`
+  (`docs/diseno/antes-despues/fase-2c-1`): venta vacía, carrito con dos productos, cobro con vuelto y
+  comprobante con WhatsApp. Se copiaron solo las imágenes, re-codificadas sin metadatos. Muestran datos
+  de prueba («Negocio E2E», «Vera Vendedora»), no de clientes. Miden 390 × 844 (1x): en celulares de
+  alta densidad se ven algo blandas. En la Fase 2 conviene sacarlas de nuevo a 3x y con un negocio de
+  ejemplo creíble, en vez de «Negocio E2E» (requiere que el dueño inicie sesión en la app local).
+- La animación de la portada usa los mismos productos y montos que las capturas
+  (`src/config/demo.ts`). Arranca recién cuando la escena se ve en pantalla.
+- **review-animations** se aplicó leyendo su SKILL.md y STANDARDS.md (la skill no se deja invocar
+  sola). Hallazgo corregido: en la B los pasos inactivos quedaban con `visibility: hidden` (vía
+  `autoAlpha` de GSAP) y un lector de pantalla solo habría leído el paso activo; ahora se ocultan solo
+  con opacidad.
+- Rendimiento: la B tiene 94 en Lighthouse celular (LCP 2,9 s, por la imagen del teléfono) contra 100
+  de la A (LCP 1,7 s). GSAP, ScrollTrigger y Lenis se cargan solo con movimiento permitido y después
+  de la primera pintura.
+- Las páginas de direcciones dan SEO 60-63 en Lighthouse porque llevan `noindex` a propósito (es un
+  aviso, no detiene la CI).
+- `sharp` (Apache-2.0) queda como dependencia de desarrollo explícita: ya venía con Astro y lo usan
+  las hojas de fotogramas.

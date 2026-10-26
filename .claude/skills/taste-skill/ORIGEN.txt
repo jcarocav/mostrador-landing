@@ -1,0 +1,8 @@
+Origen: https://github.com/Leonxlnx/taste-skill (carpeta skills/taste-skill)
+Commit: 12af471f627f866411b4bd785b19646d3672784c
+Copiado: 2026-10-25
+Licencia: MIT (archivo LICENSE de esta carpeta)
+Instalado: SOLO SKILL.md, por decisión del dueño (DECISIONES.md #8).
+No se instalaron scripts/, references/, library/ ni assets/: nada de esta skill abre Chrome,
+levanta servidores, guarda historial ni se conecta a servicios externos.
+Las capturas las hace scripts/capturas.mjs del proyecto.
