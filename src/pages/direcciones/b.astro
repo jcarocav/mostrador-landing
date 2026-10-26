@@ -1,0 +1,695 @@
+---
+// Dirección B · Mostrador de noche. Prototipo de la Fase 1: portada + «Empieza fácil».
+import '@fontsource-variable/plus-jakarta-sans/wght.css';
+import '@fontsource-variable/bricolage-grotesque/wght.css';
+import bricolage from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import ventaVacia from '../../assets/app/venta-vacia-celular.png';
+import ventaCarrito from '../../assets/app/venta-carrito-celular.png';
+import cobroVuelto from '../../assets/app/cobro-vuelto-celular.png';
+import comprobante from '../../assets/app/comprobante-whatsapp-celular.png';
+import Etiqueta from '../../componentes/Etiqueta.astro';
+import Telefono from '../../componentes/Telefono.astro';
+import { ventaDemo } from '../../config/demo';
+import { formatoPesos } from '../../config/precios';
+import Base from '../../layouts/Base.astro';
+import { marca } from '../../marca/marca';
+import { textos } from '../../textos/textos';
+
+const t = textos.portada;
+const e = textos.empiezaFacil;
+const imagenesPasos = [ventaCarrito, cobroVuelto, comprobante];
+const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPasos[i], alt: p.alt }));
+---
+
+<Base
+  titulo={`${textos.direcciones.b.nombre} · ${marca.nombre}`}
+  indexar={false}
+  precargar={[bricolage]}
+  colorTema={marca.colores.marca[950]}
+>
+  <div class="dir-b">
+    <header class="barra marco">
+      <a class="marca" href="/direcciones/" aria-label={textos.logoAlt}>
+        <span class="logo" set:html={marca.logoSvg} />
+        <span>{marca.nombre}</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a class="nav-enlace" href="#empieza">{textos.nav.comoFunciona}</a>
+        <a class="boton boton-primario boton-chico" href="#prueba">{textos.nav.accion}</a>
+      </nav>
+    </header>
+
+    <main id="contenido">
+      <section class="portada marco" aria-labelledby="titulo-portada">
+        <h1 id="titulo-portada">Tu inventario,<br class="solo-celular" /> tus ventas,<br /> tu negocio.</h1>
+        <div class="portada-cuerpo">
+          <div class="portada-texto">
+            <p class="subtitulo">{t.subtitulo}</p>
+            <div class="acciones">
+              <a class="boton boton-primario" href="#prueba">{t.botonPrueba}</a>
+              <a class="boton boton-secundario" href="#arma-tu-plan">{t.botonPlan}</a>
+            </div>
+          </div>
+
+          <div class="portada-escena" data-escena data-productos={JSON.stringify(ventaDemo.productos)}>
+            <Telefono
+              class="portada-telefono"
+              prioridad
+              cargarTodas
+              activa={1}
+              tamanos="(min-width: 1024px) 300px, 54vw"
+              pantallas={[
+                { id: 'vacia', src: ventaVacia, alt: t.altVentaVacia },
+                { id: 'carrito', src: ventaCarrito, alt: t.altVentaCarrito },
+              ]}
+            />
+            <div class="etiquetas">
+              {
+                ventaDemo.productos.map((p, i) => (
+                  <Etiqueta nombre={p.nombre} precio={p.precio} barras={p.barras} indice={i} class="etq" />
+                ))
+              }
+            </div>
+            <p class="bloque-total" data-bloque-total>
+              <span>{t.total}</span>
+              <strong class="cifra" data-total>{formatoPesos(ventaDemo.total)}</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="empieza" class="empieza" aria-labelledby="titulo-empieza" data-empieza>
+        <div class="marco empieza-marco">
+          <div class="empieza-encabezado">
+            <h2 id="titulo-empieza">{e.titulo}</h2>
+            <p>{e.bajada}</p>
+          </div>
+          <ol class="indicador" aria-hidden="true">
+            {
+              e.pasos.map((p) => (
+                <li data-indicador>
+                  {p.corto}
+                  <span class="indicador-barra" data-barra />
+                </li>
+              ))
+            }
+          </ol>
+          <div class="empieza-cuerpo">
+            <div class="escenario">
+              <Telefono class="escenario-telefono" decorativo pantallas={pantallasPasos} tamanos="(min-width: 1024px) 300px, 40vw" />
+            </div>
+            <ol class="pasos">
+              {
+                e.pasos.map((p, i) => (
+                  <li class="paso" data-paso={i}>
+                    <div class="paso-texto">
+                      <h3>{p.titulo}</h3>
+                      <p>{p.texto}</p>
+                      {i === 1 && (
+                        <div class="extras">
+                          {e.billetes.map((b) => (
+                            <span class="billete cifra" data-extra>
+                              {b}
+                            </span>
+                          ))}
+                          <p class="vuelto" data-extra>
+                            <span>{e.vuelto}</span>
+                            <strong class="cifra">{formatoPesos(ventaDemo.cobro.vuelto)}</strong>
+                          </p>
+                        </div>
+                      )}
+                      {i === 2 && (
+                        <p class="enviado" data-extra>
+                          <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M3 8.5l3 3 7-7" />
+                          </svg>
+                          {e.enviado}
+                        </p>
+                      )}
+                    </div>
+                    <Telefono class="paso-telefono" pantallas={[pantallasPasos[i]]} tamanos="(min-width: 1024px) 280px, 64vw" />
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pie marco">
+      <p>{textos.pie.derechos(new Date().getFullYear())}</p>
+    </footer>
+  </div>
+</Base>
+
+<style is:global>
+  .dir-b {
+    --fuente: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --fuente-titulo: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
+    --color-fondo: var(--marca-950);
+    --color-texto: #ffffff;
+    --color-texto-suave: var(--marca-200);
+    --color-superficie: var(--marca-900);
+    --color-foco: var(--marca-300);
+    --color-etiqueta: var(--marca-900);
+    --color-etiqueta-texto: #ffffff;
+    --color-etiqueta-estado: var(--exito-300);
+    --color-haz: var(--marca-300);
+    --color-campo: var(--marca-900);
+
+    font-family: var(--fuente);
+    background: var(--color-fondo);
+    color: var(--color-texto);
+  }
+
+  .dir-b .cifra {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dir-b .telefono {
+    --bisel: var(--neutro-950);
+  }
+
+  .dir-b .ficha-vuelo {
+    position: absolute;
+    z-index: 5;
+    padding: 8px 14px;
+    border-radius: 2px;
+    background: #ffffff;
+    color: var(--marca-950);
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+</style>
+
+<style>
+  .marco {
+    width: 100%;
+    max-width: 1344px;
+    margin-inline: auto;
+    padding-inline: var(--margen);
+  }
+
+  .barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 16px;
+  }
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: var(--color-texto);
+    font-family: var(--fuente-titulo);
+    font-size: 1.375rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .logo {
+    width: 32px;
+    color: var(--marca-500);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-enlace {
+    display: none;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 14px;
+    color: var(--color-texto);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (min-width: 720px) {
+    .nav-enlace {
+      display: inline-flex;
+    }
+  }
+
+  /* Botones: planos y de esquina recta, con respuesta al presionar. */
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding-inline: 28px;
+    border-radius: 2px;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      transform var(--duracion-presion) var(--curva-salida),
+      background-color var(--duracion-presion) ease;
+  }
+
+  .boton:active {
+    transform: scale(0.97);
+  }
+
+  .boton-chico {
+    min-height: 44px;
+    padding-inline: 18px;
+    font-size: 1rem;
+  }
+
+  .boton-primario {
+    background: #ffffff;
+    color: var(--marca-950);
+  }
+
+  .boton-secundario {
+    background: var(--marca-800);
+    color: #ffffff;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .boton-primario:hover {
+      background: var(--marca-100);
+    }
+
+    .boton-secundario:hover {
+      background: var(--marca-700);
+    }
+  }
+
+  /* Portada */
+  .portada {
+    padding-block: clamp(24px, 5vh, 64px) clamp(56px, 10vh, 120px);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(2.75rem, 7.4vw, 7.25rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+
+  .portada-cuerpo {
+    display: grid;
+    gap: 40px;
+    margin-top: clamp(28px, 4vw, 56px);
+  }
+
+  .subtitulo {
+    max-width: 34ch;
+    margin: 0;
+    color: var(--color-texto-suave);
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.5;
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .portada-escena {
+    --ancho-telefono: min(54vw, 300px);
+    --ancho-etiqueta: 100%;
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--ancho-telefono) 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .etiquetas {
+    display: grid;
+    gap: 12px;
+    padding-top: 12%;
+  }
+
+  .bloque-total {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 4px;
+    margin: 8px 0 0;
+  }
+
+  .bloque-total span {
+    color: var(--color-texto-suave);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .bloque-total strong {
+    font-family: var(--fuente-titulo);
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  @media (min-width: 1024px) {
+    .portada-cuerpo {
+      grid-template-columns: 4fr 8fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .portada-escena {
+      --ancho-telefono: 300px;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: auto 1fr;
+      column-gap: 48px;
+    }
+
+    .portada-escena :global(.portada-telefono) {
+      grid-row: 1 / span 2;
+    }
+
+    .etiquetas {
+      max-width: 240px;
+      padding-top: 40px;
+    }
+
+    .bloque-total {
+      grid-column: 2;
+      align-self: start;
+      margin: 32px 0 0;
+    }
+  }
+
+  /* Estados de la animación de la portada (solo con movimiento y JavaScript). */
+  :global(.js-movimiento) .portada-escena :global([data-estado]) {
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  :global(.js-movimiento) .portada-escena :global(.escaneada [data-estado]) {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) [data-total] {
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  :global(.js-movimiento) .contando [data-total] {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='vacia']) {
+    opacity: 1;
+  }
+
+  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='carrito']) {
+    opacity: 0;
+  }
+
+  /* Empieza fácil (sin movimiento: los tres pasos uno bajo otro, cada uno con su pantalla) */
+  .empieza {
+    background: var(--color-campo);
+  }
+
+  .empieza-marco {
+    padding-block: clamp(72px, 12vw, 160px);
+  }
+
+  .empieza-encabezado h2 {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .empieza-encabezado p {
+    max-width: 40ch;
+    margin: 14px 0 0;
+    color: var(--color-texto-suave);
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  }
+
+  .indicador,
+  .escenario {
+    display: none;
+  }
+
+  .empieza-cuerpo {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .pasos {
+    display: grid;
+    gap: 64px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paso {
+    display: grid;
+    gap: 24px;
+    justify-items: start;
+  }
+
+  .paso h3 {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(2rem, 4.2vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .paso p {
+    max-width: 34ch;
+    margin: 14px 0 0;
+    color: var(--color-texto-suave);
+    font-size: 1.125rem;
+  }
+
+  .paso :global(.paso-telefono) {
+    --ancho-telefono: min(64vw, 280px);
+  }
+
+  .extras {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .billete {
+    padding: 10px 16px;
+    border-radius: 2px;
+    background: var(--marca-800);
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .paso .vuelto {
+    display: grid;
+    flex-basis: 100%;
+    margin: 12px 0 0;
+    color: var(--exito-300);
+  }
+
+  .vuelto span {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .vuelto strong {
+    font-family: var(--fuente-titulo);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .paso .enviado {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 10px 16px;
+    border-radius: 2px;
+    background: var(--exito-800);
+    color: #ffffff;
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .enviado svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (min-width: 1024px) {
+    .paso {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 64px;
+    }
+  }
+
+  /* Con movimiento: una sola pantalla fija; los pasos se reemplazan en el mismo lugar. */
+  .empieza:global(.escena-fija) .empieza-marco {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    height: 100vh;
+    height: 100svh;
+    padding-block: clamp(20px, 4vh, 48px);
+  }
+
+  .empieza:global(.escena-fija) .empieza-encabezado h2 {
+    font-size: clamp(2rem, 4.4vw, 4rem);
+  }
+
+  .empieza:global(.escena-fija) .empieza-encabezado p {
+    display: none;
+  }
+
+  .empieza:global(.escena-fija) .indicador {
+    display: flex;
+    gap: 24px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-texto-suave);
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .indicador li {
+    position: relative;
+    padding-bottom: 10px;
+    transition: color 200ms ease;
+  }
+
+  .indicador li:global(.activo) {
+    color: var(--color-texto);
+  }
+
+  .indicador-barra {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-texto);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .empieza:global(.escena-fija) .empieza-cuerpo {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    min-height: 0;
+    margin-top: 16px;
+  }
+
+  .empieza:global(.escena-fija) .escenario {
+    display: flex;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+    --ancho-telefono: min(40vw, calc(44svh * 390 / 844));
+  }
+
+  .empieza:global(.escena-fija) .pasos {
+    position: relative;
+    display: block;
+  }
+
+  .empieza:global(.escena-fija) .paso {
+    position: absolute;
+    inset: 0 0 auto 0;
+  }
+
+  .empieza:global(.escena-fija) .paso :global(.paso-telefono) {
+    display: none;
+  }
+
+  .empieza:global(.escena-fija) .paso h3 {
+    font-size: clamp(1.75rem, 4vw, 3.75rem);
+  }
+
+  .empieza:global(.escena-fija) .paso p {
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+
+  .empieza:global(.escena-fija) .extras,
+  .empieza:global(.escena-fija) .paso .enviado {
+    margin-top: 12px;
+  }
+
+  .empieza:global(.escena-fija) .vuelto strong {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+  }
+
+  @media (min-width: 1024px) {
+    .empieza:global(.escena-fija) .empieza-cuerpo {
+      grid-template-columns: 5fr 7fr;
+      grid-template-rows: 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+      --ancho-telefono: min(300px, calc(70svh * 390 / 844));
+    }
+
+    .empieza:global(.escena-fija) .pasos {
+      height: 100%;
+    }
+
+    .empieza:global(.escena-fija) .paso {
+      inset: 50% 0 auto 0;
+      translate: 0 -50%;
+    }
+
+    .empieza:global(.escena-fija) .paso p {
+      font-size: 1.125rem;
+    }
+  }
+
+  .pie {
+    padding-block: 40px;
+    color: var(--color-texto-suave);
+  }
+</style>
+
+<script>
+  import { cancelarRespaldo, hayMovimiento } from '../../scripts/movimiento';
+
+  if (hayMovimiento()) {
+    cancelarRespaldo();
+    import('../../scripts/direccion-b')
+      .then((m) => m.iniciar())
+      .catch(() => document.documentElement.classList.remove('js-movimiento'));
+  }
+</script>
