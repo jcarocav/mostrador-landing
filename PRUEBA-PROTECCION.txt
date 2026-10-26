@@ -1,1 +1,0 @@
-Archivo temporal para probar la protección de main. Se borra al cerrar el PR.
