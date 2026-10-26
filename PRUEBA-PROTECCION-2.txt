@@ -1,0 +1,1 @@
+Archivo temporal para probar la protección de main. Este PR se cierra sin fusionar.
