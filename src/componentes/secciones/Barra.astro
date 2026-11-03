@@ -1,0 +1,49 @@
+---
+import { marca } from '../../marca/marca';
+import { textos } from '../../textos/textos';
+---
+
+<header class="barra marco">
+  <a class="marca" href="/" aria-label={textos.logoAlt}>
+    <span class="logo" set:html={marca.logoSvg} />
+    <span>{marca.nombre}</span>
+  </a>
+  <nav class="nav" aria-label={textos.nav.principal}>
+    <a class="nav-enlace" href="/#empieza">{textos.nav.comoFunciona}</a>
+    <a class="nav-enlace" href="/#planes">{textos.nav.planes}</a>
+    <a class="nav-enlace" href="/#preguntas">{textos.nav.preguntas}</a>
+    <a class="boton boton-primario boton-chico" href="/#contacto">{textos.nav.accion}</a>
+  </nav>
+</header>
+
+<style>
+  .barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 16px;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-enlace {
+    display: none;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 14px;
+    color: var(--color-texto);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (min-width: 720px) {
+    .nav-enlace {
+      display: inline-flex;
+    }
+  }
+</style>

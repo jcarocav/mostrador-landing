@@ -1,0 +1,262 @@
+---
+// Pestañas por rubro. Sin JavaScript se ven todos los rubros, uno bajo otro.
+import { textos } from '../../textos/textos';
+import Etiqueta from '../Etiqueta.astro';
+
+const r = textos.rubros;
+---
+
+<section id="rubros" class="seccion marco" aria-labelledby="titulo-rubros">
+  <div class="rubros-cabeza" data-aparece>
+    <h2 id="titulo-rubros" class="seccion-titulo">{r.titulo}</h2>
+    <p class="seccion-bajada">{r.bajada}</p>
+  </div>
+
+  <div class="pestanas" role="tablist" aria-label={r.etiquetaPestanas} data-pestanas data-aparece>
+    {
+      r.lista.map((x, i) => (
+        <button
+          class="pestana"
+          type="button"
+          role="tab"
+          id={`pestana-${x.id}`}
+          aria-controls={`panel-${x.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {x.nombre}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="paneles">
+    {
+      r.lista.map((x, i) => (
+        <div class:list={['panel', { activo: i === 0 }]} role="tabpanel" id={`panel-${x.id}`} aria-labelledby={`pestana-${x.id}`} tabindex="0">
+          <div class="panel-texto">
+            <h3>{x.titulo}</h3>
+            <p>{x.texto}</p>
+            <p class="panel-rotulo">{r.usaras}</p>
+            <ul class="panel-puntos">
+              {x.puntos.map((punto) => <li>{punto}</li>)}
+            </ul>
+          </div>
+          <div class="panel-lado">
+            <p class="panel-rotulo">{r.ejemplos}</p>
+            <div class="panel-etiquetas">
+              {x.productos.map((p, j) => <Etiqueta nombre={p.nombre} precio={p.precio} barras={p.barras} indice={j} sinEstado />)}
+            </div>
+            <ul class="panel-pronto">
+              {
+                x.pronto.map((nombre) => (
+                  <li>
+                    <span>{nombre}</span>
+                    <span class="pronto">{textos.proximamente}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  // Patrón de pestañas de WAI-ARIA: flechas, Inicio y Fin mueven el foco y cambian de pestaña al tiro.
+  document.querySelectorAll<HTMLElement>('[data-pestanas]').forEach((lista) => {
+    const pestanas = [...lista.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+
+    const elegir = (nueva: HTMLButtonElement, enfocar: boolean) => {
+      for (const p of pestanas) {
+        const activa = p === nueva;
+        p.setAttribute('aria-selected', String(activa));
+        p.tabIndex = activa ? 0 : -1;
+        document.getElementById(p.getAttribute('aria-controls')!)?.classList.toggle('activo', activa);
+      }
+      if (enfocar) nueva.focus();
+    };
+
+    lista.addEventListener('click', (e) => {
+      const pestana = (e.target as HTMLElement).closest<HTMLButtonElement>('[role="tab"]');
+      if (pestana) elegir(pestana, false);
+    });
+
+    lista.addEventListener('keydown', (e) => {
+      const i = pestanas.indexOf(document.activeElement as HTMLButtonElement);
+      const destino = {
+        ArrowRight: i + 1,
+        ArrowDown: i + 1,
+        ArrowLeft: i - 1,
+        ArrowUp: i - 1,
+        Home: 0,
+        End: pestanas.length - 1,
+      }[e.key];
+      if (destino === undefined) return;
+      e.preventDefault();
+      elegir(pestanas[(destino + pestanas.length) % pestanas.length], true);
+    });
+  });
+</script>
+
+<style>
+  .rubros-cabeza {
+    display: grid;
+    gap: 8px;
+  }
+
+  .pestanas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+
+  .pestana {
+    min-height: 52px;
+    padding: 8px 6px;
+    border: 0;
+    border-radius: 2px;
+    background: var(--color-superficie);
+    color: var(--color-texto);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .pestana[aria-selected='true'] {
+    background: var(--color-accion);
+    color: var(--color-accion-texto);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pestana[aria-selected='false']:hover {
+      background: var(--color-secundario);
+    }
+  }
+
+  @media (min-width: 720px) {
+    .pestanas {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .pestana {
+      font-size: 1.0625rem;
+    }
+  }
+
+  .paneles {
+    display: grid;
+    gap: 56px;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+
+  .panel {
+    display: grid;
+    gap: 32px;
+  }
+
+  /* Con JavaScript solo se ve la pestaña activa, y entra sin mover nada alrededor. */
+  :global(.js) .panel:not(.activo) {
+    display: none;
+  }
+
+  :global(.js) .panel.activo {
+    transition:
+      opacity 220ms var(--curva-salida),
+      transform 260ms var(--curva-salida);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  .panel:focus-visible {
+    outline-offset: 8px;
+  }
+
+  h3 {
+    max-width: 18ch;
+    margin: 0;
+    font-size: clamp(2.25rem, 4.6vw, 4.25rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .panel-texto > p:first-of-type {
+    max-width: 46ch;
+    margin: 16px 0 0;
+    font-size: 1.125rem;
+  }
+
+  .panel-rotulo {
+    margin: 0;
+    color: var(--color-texto-suave);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .panel-texto .panel-rotulo {
+    margin-top: 28px;
+  }
+
+  .panel-puntos {
+    display: grid;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .panel-etiquetas {
+    --ancho-etiqueta: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .panel-pronto {
+    display: grid;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .panel-pronto li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+  }
+
+  @media (min-width: 1024px) {
+    .rubros-cabeza {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      gap: 48px;
+    }
+
+    .paneles {
+      min-height: 380px;
+    }
+
+    .panel {
+      grid-template-columns: 7fr 5fr;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>

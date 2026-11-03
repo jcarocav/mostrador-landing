@@ -1,0 +1,60 @@
+---
+import { textos } from '../../textos/textos';
+
+const t = textos.confianza;
+---
+
+<section id="confianza" class="seccion seccion-campo" aria-labelledby="titulo-confianza">
+  <div class="marco confianza">
+    <div data-aparece>
+      <h2 id="titulo-confianza" class="seccion-titulo">{t.titulo}</h2>
+      <p class="seccion-bajada">{t.bajada}</p>
+    </div>
+    <ul class="confianza-lista" data-aparece>
+      {
+        t.lista.map((x) => (
+          <li>
+            <h3>{x.titulo}</h3>
+            <p>{x.texto}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .confianza {
+    display: grid;
+    gap: 40px;
+  }
+
+  .confianza-lista {
+    display: grid;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .confianza-lista p {
+    max-width: 52ch;
+    margin: 6px 0 0;
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 1024px) {
+    .confianza {
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+    }
+  }
+</style>

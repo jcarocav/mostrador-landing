@@ -111,8 +111,40 @@ function empieza(seccion: HTMLElement) {
   });
 }
 
+/** Cada bloque entra una sola vez, cuando asoma. Los que ya se ven entran de inmediato. */
+function apariciones() {
+  const observador = new IntersectionObserver(
+    (entradas, obs) => {
+      for (const e of entradas) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    },
+    { rootMargin: '0px 0px -8% 0px' },
+  );
+  document.querySelectorAll('[data-aparece]').forEach((el) => observador.observe(el));
+}
+
+/** «Nunca te deja parado»: sin señal, guardada y enviada se encienden en orden. Explica el recorrido de la venta. */
+function secuencia(lista: HTMLElement) {
+  alAparecer(
+    lista,
+    async () => {
+      for (const paso of lista.querySelectorAll('[data-paso-senal]')) {
+        paso.classList.add('visible');
+        await esperar(420);
+      }
+    },
+    0.6,
+  );
+}
+
 export function iniciar() {
   desplazamientoSuave();
+  apariciones();
+  const lista = document.querySelector<HTMLElement>('[data-secuencia]');
+  if (lista) secuencia(lista);
   const escena = document.querySelector<HTMLElement>('[data-escena]');
   if (escena) alAparecer(escena, () => portada(escena));
 

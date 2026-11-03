@@ -12,8 +12,6 @@ export const marca = {
     'Vende, controla tu stock y administra tu negocio desde el PC o el celular que ya tienes.',
   /** SVG del logo. Usa currentColor para tomar el color del tema. */
   logoSvg,
-  /** Número de WhatsApp en formato internacional sin «+» (pendiente del dueño). */
-  whatsapp: '',
   colores: {
     // Índigo: color principal (acciones, enlaces, marca). Valores de la app.
     marca: {

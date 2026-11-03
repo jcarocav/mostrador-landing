@@ -108,6 +108,137 @@ svg {
   pointer-events: none;
 }
 
+.marco {
+  width: 100%;
+  max-width: 1344px;
+  margin-inline: auto;
+  padding-inline: var(--margen);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--color-texto);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.logo {
+  width: 32px;
+  color: var(--marca-500);
+}
+
+/* Botones: planos y de esquina recta, con respuesta al presionar. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding-inline: 28px;
+  border-radius: 2px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform var(--duracion-presion) var(--curva-salida),
+    background-color var(--duracion-presion) ease;
+}
+
+.boton:active {
+  transform: scale(0.97);
+}
+
+.boton-chico {
+  min-height: 44px;
+  padding-inline: 18px;
+  font-size: 1rem;
+}
+
+.boton-primario {
+  background: var(--color-accion);
+  color: var(--color-accion-texto);
+}
+
+.boton-secundario {
+  background: var(--color-secundario);
+  color: var(--color-texto);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .boton-primario:hover {
+    background: var(--color-accion-encima);
+  }
+
+  .boton-secundario:hover {
+    background: var(--color-secundario-encima);
+  }
+}
+
+/* Títulos y cifras grandes: la única parte del sitio con Bricolage Grotesque. */
+h1,
+h2,
+h3,
+.cifra-grande {
+  font-family: var(--fuente-titulo);
+}
+
+/* El navegador no maqueta lo que está lejos de la pantalla: en un celular la página larga costaba 1 s de CPU. */
+.seccion {
+  padding-block: clamp(72px, 12vw, 180px);
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 1100px;
+}
+
+.seccion-campo {
+  background: var(--color-campo);
+}
+
+.seccion-titulo {
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.seccion-bajada {
+  max-width: 46ch;
+  margin: 18px 0 0;
+  color: var(--color-texto-suave);
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+}
+
+/* Lo que aún no está terminado siempre lo dice con palabras, nunca solo con color. */
+.pronto {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: var(--color-secundario);
+  color: var(--color-texto);
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Entrada de las secciones: solo con movimiento y una sola vez (ver escenas.ts). */
+.js-movimiento [data-aparece] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 320ms var(--curva-salida),
+    transform 420ms var(--curva-salida);
+}
+
+.js-movimiento [data-aparece].visible {
+  opacity: 1;
+  transform: none;
+}
+
 /* Saltos de línea que solo valen en pantallas chicas (títulos de tres líneas cortas en celular). */
 @media (min-width: 720px) {
   br.solo-celular {

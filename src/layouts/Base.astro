@@ -55,6 +55,7 @@ const fuentes = `
     <script is:inline>
       (function () {
         var d = document.documentElement;
+        d.classList.add('js');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         d.classList.add('js-movimiento');
         window.__respaldoMovimiento = setTimeout(function () {

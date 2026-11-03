@@ -9,7 +9,7 @@ import * as chromeLauncher from 'chrome-launcher';
 import lighthouse from 'lighthouse';
 import { nombreDePagina, servirDist } from './lib/servidor.mjs';
 
-const PAGINAS = ['/'];
+const PAGINAS = ['/', '/privacidad/'];
 const CORRIDAS = 3;
 // error = detiene la CI; aviso = solo se informa.
 const MINIMOS = {

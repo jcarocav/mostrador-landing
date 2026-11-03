@@ -1,0 +1,65 @@
+---
+import Barra from '../componentes/secciones/Barra.astro';
+import Pie from '../componentes/secciones/Pie.astro';
+import Base from '../layouts/Base.astro';
+import { textos } from '../textos/textos';
+
+const t = textos.privacidad;
+---
+
+<Base titulo={t.tituloPagina} descripcion={t.descripcion}>
+  <Barra />
+  <main id="contenido" class="marco privacidad">
+    <h1>{t.titulo}</h1>
+    {
+      t.bloques.map((b) => (
+        <section>
+          <h2>{b.titulo}</h2>
+          <p>{b.texto}</p>
+        </section>
+      ))
+    }
+    <p><a href="/">{t.volver}</a></p>
+  </main>
+  <Pie />
+</Base>
+
+<style>
+  .privacidad {
+    padding-block: clamp(32px, 6vw, 72px) clamp(56px, 8vw, 96px);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    margin: clamp(32px, 4vw, 48px) 0 0;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    max-width: 62ch;
+    margin: 10px 0 0;
+    font-size: 1.125rem;
+  }
+
+  main > p {
+    margin-top: 40px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-texto);
+    font-weight: 600;
+  }
+</style>
