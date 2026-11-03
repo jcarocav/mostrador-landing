@@ -1,0 +1,78 @@
+---
+import { textos } from '../../textos/textos';
+
+const t = textos.preguntas;
+---
+
+<section id="preguntas" class="seccion marco" aria-labelledby="titulo-preguntas">
+  <h2 id="titulo-preguntas" class="seccion-titulo" data-aparece>{t.titulo}</h2>
+  <div class="lista" data-aparece>
+    {
+      t.lista.map((x) => (
+        <details>
+          <summary>{x.p}</summary>
+          <p>{x.r}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .lista {
+    display: grid;
+    gap: 4px;
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+
+  details {
+    border-radius: 2px;
+    background: var(--color-superficie);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 60px;
+    padding: 12px 20px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Un «+» que se vuelve «×» al abrir: dice el estado con su forma, no con color. */
+  summary::after {
+    content: '+';
+    flex: none;
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1;
+    transition: transform 180ms var(--curva-salida);
+  }
+
+  details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  details p {
+    max-width: 68ch;
+    margin: 0;
+    padding: 0 20px 20px;
+    font-size: 1.0625rem;
+  }
+
+  @media (min-width: 1024px) {
+    .lista {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 4px 12px;
+    }
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+import { marca } from '../../marca/marca';
+import { textos } from '../../textos/textos';
+---
+
+<footer class="pie marco">
+  <p class="pie-nombre cifra-grande" aria-hidden="true">{marca.nombre}</p>
+  <div class="pie-fila">
+    <p>{textos.pie.derechos(new Date().getFullYear())}</p>
+    <nav aria-label={textos.pie.navegacion}>
+      <a href="/privacidad/">{textos.pie.privacidad}</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    padding-block: clamp(40px, 6vw, 72px) 88px;
+    color: var(--color-texto-suave);
+  }
+
+  .pie p {
+    margin: 0;
+  }
+
+  .pie .pie-nombre {
+    color: var(--color-texto);
+    font-size: clamp(3.25rem, 17.4vw, 16rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+  }
+
+  .pie-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 24px;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-texto);
+    font-weight: 600;
+  }
+</style>

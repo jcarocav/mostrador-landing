@@ -9,17 +9,19 @@ interface Props {
   barras: string;
   indice: number;
   class?: string;
+  /** Sin la línea «En el carrito»: para mostrar el producto fuera de la animación de la portada. */
+  sinEstado?: boolean;
 }
 
-const { nombre, precio, barras, indice, class: clase } = Astro.props;
+const { nombre, precio, barras, indice, class: clase, sinEstado = false } = Astro.props;
 
 // Anchos de barra y espacio a partir de cada dígito: siempre el mismo dibujo para el mismo número.
-const trazos: { x: number; ancho: number }[] = [];
 let x = 0;
+let trazos = '';
 for (const digito of barras) {
   const d = Number(digito);
   const ancho = 1 + (d % 3);
-  trazos.push({ x, ancho });
+  trazos += `M${x} 0h${ancho}v40h-${ancho}z`;
   x += ancho + 1 + ((d + 1) % 2);
 }
 const anchoTotal = x;
@@ -30,21 +32,27 @@ const anchoTotal = x;
   <p class="etiqueta-precio">{formatoPesos(precio)}</p>
   <div class="etiqueta-barras" aria-hidden="true">
     <svg viewBox={`0 0 ${anchoTotal} 40`} preserveAspectRatio="none">
-      {trazos.map((t) => <rect x={t.x} y="0" width={t.ancho} height="40" />)}
+      <path d={trazos}></path>
     </svg>
     <span class="etiqueta-haz" data-haz></span>
   </div>
-  <p class="etiqueta-estado" data-estado>
-    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" /></svg>
-    {textos.portada.escaneado}
-  </p>
+  {
+    !sinEstado && (
+      <p class="etiqueta-estado" data-estado>
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M3 8.5l3 3 7-7" />
+        </svg>
+        {textos.portada.escaneado}
+      </p>
+    )
+  }
 </div>
 
 <style>
   .etiqueta {
     width: var(--ancho-etiqueta, 180px);
     padding: 14px 16px 12px;
-    border-radius: 14px;
+    border-radius: 2px;
     background: var(--color-etiqueta, var(--color-superficie));
     color: var(--color-etiqueta-texto, var(--color-texto));
   }

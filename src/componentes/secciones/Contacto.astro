@@ -1,0 +1,88 @@
+---
+import { enlaceWhatsApp } from '../../config/contacto';
+import { textos } from '../../textos/textos';
+
+const t = textos.contacto;
+const enlace = enlaceWhatsApp(t.mensaje);
+---
+
+<section id="contacto" class="seccion seccion-campo" aria-labelledby="titulo-contacto">
+  <div class="marco contacto" data-aparece>
+    <div>
+      <h2 id="titulo-contacto" class="seccion-titulo">{t.titulo}</h2>
+      <p class="seccion-bajada">{t.bajada}</p>
+    </div>
+    <div class="contacto-accion">
+      <a class="boton boton-primario" href={enlace} rel="noopener">{t.boton}</a>
+      <p>
+        {t.aviso} <a href="/privacidad/">{t.avisoEnlace}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Fuera de <main>: el botón sigue a la persona por toda la página. Blanco, porque el verde es solo para cobrar. -->
+<a class="flotante" href={enlace} rel="noopener" aria-label={t.flotante} data-whatsapp-flotante>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.3.6-1.2 0-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.2-.3-.2-.5-.3Z"
+    ></path>
+  </svg>
+</a>
+
+<style>
+  .contacto {
+    display: grid;
+    gap: 32px;
+  }
+
+  .contacto-accion p {
+    margin: 14px 0 0;
+    color: var(--color-texto-suave);
+  }
+
+  .contacto-accion p a {
+    color: var(--color-texto);
+  }
+
+  .flotante {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 2px;
+    background: var(--color-accion);
+    color: var(--color-accion-texto);
+    transition:
+      transform var(--duracion-presion) var(--curva-salida),
+      background-color var(--duracion-presion) ease;
+  }
+
+  .flotante svg {
+    width: 30px;
+    height: 30px;
+    fill: currentColor;
+  }
+
+  .flotante:active {
+    transform: scale(0.97);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .flotante:hover {
+      background: var(--color-accion-encima);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contacto {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: end;
+    }
+  }
+</style>

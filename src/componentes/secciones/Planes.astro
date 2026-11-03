@@ -1,0 +1,189 @@
+---
+import { enlaceWhatsApp } from '../../config/contacto';
+import { conIva, formatoNumero, formatoPesos, planes } from '../../config/precios';
+import { textos } from '../../textos/textos';
+
+const t = textos.planes;
+const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planPyme, empresa: t.planEmpresa };
+---
+
+<section id="planes" class="seccion marco" aria-labelledby="titulo-planes">
+  <div data-aparece>
+    <h2 id="titulo-planes" class="seccion-titulo">{t.titulo}</h2>
+    <p class="seccion-bajada">{t.bajada}</p>
+  </div>
+
+  <div class="planes" data-aparece>
+    {
+      planes.map((p) => (
+        <article class:list={['plan', { destacado: p.id === 'pyme' }]} data-plan={p.id} aria-labelledby={`nombre-${p.id}`}>
+          <h3 id={`nombre-${p.id}`}>{p.nombre}</h3>
+          <p class="plan-frase">{frases[p.id]}</p>
+          {p.aCotizar ? (
+            <>
+              <p class="plan-precio cifra-grande">{t.aCotizar}</p>
+              <p class="plan-nota">{t.empresaTexto}</p>
+              <a class="boton plan-boton" href={enlaceWhatsApp(t.mensajeCotizar)} rel="noopener">
+                {t.botonEmpresa}
+              </a>
+            </>
+          ) : (
+            <>
+              <p class="plan-precio cifra cifra-grande" data-precio-promocional>
+                {formatoPesos(p.precioPromocional)}
+              </p>
+              <p class="plan-unidad">
+                {t.alMes}, {t.primerosMeses}
+              </p>
+              <p class="plan-despues">
+                {t.desdeMes} <strong class="cifra" data-precio-normal>{formatoPesos(p.precioNormal)}</strong> {t.alMes}
+              </p>
+              <p class="plan-nota">{t.conIva(formatoPesos(conIva(p.precioPromocional)), formatoPesos(conIva(p.precioNormal)))}</p>
+              <ul class="plan-limites">
+                <li>{t.limites.cajas(formatoNumero(p.limites.cajas))}</li>
+                <li>{t.limites.usuarios(formatoNumero(p.limites.usuarios))}</li>
+                <li>{t.limites.ubicaciones(formatoNumero(p.limites.ubicaciones))}</li>
+                <li>{t.limites.productos(formatoNumero(p.limites.productos))}</li>
+              </ul>
+              <a class="boton plan-boton" href={enlaceWhatsApp(t.mensajeProbar(p.nombre))} rel="noopener">
+                {t.boton}
+              </a>
+            </>
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="incluyen" data-aparece>
+    <h3>{t.incluyenTitulo}</h3>
+    <ul>
+      {t.incluyen.map((x) => <li>{x}</li>)}
+      <li class="incluyen-pronto">
+        <span>{t.prontoTitulo}</span>
+        <span class="pronto">{textos.proximamente}</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .planes {
+    display: grid;
+    gap: 12px;
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .plan {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: 2px;
+    background: var(--color-superficie);
+  }
+
+  .plan.destacado {
+    background: var(--color-ficha);
+    color: var(--color-ficha-texto);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .plan p {
+    margin: 0;
+  }
+
+  .plan .plan-frase {
+    margin-top: 4px;
+    font-size: 1.125rem;
+  }
+
+  .plan .plan-precio {
+    margin-top: 28px;
+    font-size: clamp(3rem, 5.6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .plan-unidad {
+    font-weight: 600;
+  }
+
+  .plan .plan-despues {
+    margin-top: 16px;
+    font-size: 1.125rem;
+  }
+
+  .plan .plan-nota {
+    margin-top: 6px;
+  }
+
+  .plan-limites {
+    display: grid;
+    gap: 4px;
+    margin: 24px 0 28px;
+    padding: 0;
+    list-style: none;
+    font-weight: 600;
+  }
+
+  .plan-boton {
+    margin-top: auto;
+    background: var(--color-accion);
+    color: var(--color-accion-texto);
+  }
+
+  .destacado .plan-boton {
+    background: var(--color-fondo);
+    color: var(--color-texto);
+  }
+
+  .incluyen {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .incluyen ul {
+    display: grid;
+    gap: 6px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.125rem;
+  }
+
+  .incluyen-pronto {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .plan-boton:hover {
+      background: var(--color-accion-encima);
+    }
+
+    .destacado .plan-boton:hover {
+      background: var(--color-superficie);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .planes {
+      grid-template-columns: 1fr 1.2fr 1fr;
+      align-items: stretch;
+    }
+
+    .incluyen ul {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px 48px;
+    }
+  }
+</style>

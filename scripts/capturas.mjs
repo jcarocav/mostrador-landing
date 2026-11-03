@@ -6,7 +6,7 @@ import { join, resolve } from 'node:path';
 import { chromium, devices } from '@playwright/test';
 import { nombreDePagina, servirDist } from './lib/servidor.mjs';
 
-const PAGINAS = (process.env.PAGINAS ?? '/').split(',');
+const PAGINAS = (process.env.PAGINAS ?? '/,/privacidad/').split(',');
 const TAMANOS = [
   { nombre: 'pc', opciones: { viewport: { width: 1440, height: 900 } } },
   { nombre: 'tablet', opciones: { ...devices['iPad (gen 7)'], defaultBrowserType: undefined } },

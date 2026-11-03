@@ -272,3 +272,86 @@ comprobar se marca **NO VERIFICADO**.
   **NO VERIFICADO** en un celular físico: el dueño debe probar si se siente natural.
 - Los colores de la dirección B pasaron de `.dir-b` a las variables del tema en `global.css`, porque
   ahora es el único tema del sitio.
+
+## 17 · 2026-11-02 · Tabla «disponible / próximamente» (para que el dueño la revise al final)
+
+Salió de leer el código de `mostrador-dev` (menú del portal, pantallas, migraciones, pruebas E2E) y su
+especificación, con `main` en `9d1eb1b` y la rama `freno-vales`. «Disponible» significa que existe la
+pantalla y su prueba E2E. **Producción todavía no existe:** disponible no quiere decir que un cliente
+pueda entrar hoy (ver #18).
+
+| Función | Estado | Cómo se comprobó |
+|---|---|---|
+| Caja en el navegador del PC, tablet y celular | Disponible | `src/pages/caja/`, `fase22-caja` |
+| Escanear con cámara o pistola, buscar por nombre | Disponible | `Venta.tsx` |
+| Accesos rápidos, ventas en espera, descuentos, notas | Disponible | `Venta.tsx`, capturas |
+| Cobro en efectivo, débito, crédito, transferencia y mixto | Disponible, **sin terminal integrado** | `Cobro.tsx` |
+| Vuelto con billetes y redondeo legal del efectivo | Disponible | `fase22-caja` |
+| Comprobante interno por WhatsApp, correo, imagen, PDF o impresora | Disponible | `Comprobante.tsx` |
+| Vender sin conexión; la venta se envía sola al volver la señal | Disponible | `fase22-caja`, «sin conexión» |
+| Apertura, arqueo, retiros y cierre de caja con informe | Disponible | `Arqueo.tsx`, `CierreCajaDetalle.tsx` |
+| Devoluciones y vales | Disponible | `Devoluciones.tsx`, `Vales.tsx` |
+| Stock en vivo por ubicación, traslados, reposición, conteos, mermas | Disponible | menú del portal |
+| Pedidos a proveedores y pedidos de clientes | Disponible | menú del portal |
+| Importar y editar productos por Excel; stock por Excel | Disponible | `ImportarProductos`, `EdicionMasiva`, `StockMasivo` |
+| Códigos internos y etiquetas para imprimir | Disponible | `CodigosBarra`, `Etiquetas` |
+| Código de unidad y de caja | Disponible | `Venta.tsx` |
+| Reportes de inventario: valorizado, sin movimiento, quiebres, rotación, mermas | Disponible | `Reportes.tsx` |
+| Usuarios, cuatro roles, turnos con PIN | Disponible | `Usuarios.tsx`, `fase16-turnos` |
+| Exportar a Excel o CSV y respaldo | Disponible | `Exportar.tsx`, `Respaldo.tsx` |
+| Logo y colores del negocio | Disponible | `Personalizacion.tsx` |
+| Plantillas por rubro: mascotas, minimarket/almacén, ferretería, boutique, librería, genérica | Disponible (solo categorías) | `lib/rubros.ts` |
+| Límites por plan aplicados en el servidor | Disponible | migración `organizaciones_y_membresias` |
+| Boletas, facturas, notas de crédito y guías del SII | **Próximamente** | Fase 3; el comprobante dice «No es una boleta» |
+| Reportes de ventas y rentabilidad | **Próximamente** | sub-paso 2e; el menú solo tiene inventario |
+| Starterpack (pistolas e impresoras) | **Próximamente** | Fase 4 |
+| POS móvil con QR | **Próximamente** | sub-paso 2e. La caja en el celular sí existe: es otra cosa |
+| Integraciones: terminales, tiendas en línea, despachos, contabilidad | **Próximamente** | Fase 5 |
+| Clientes, fiado, cotizaciones, listas de precio, ofertas | **Próximamente** | sigue en la lista de pendientes de `PROGRESO.md` |
+| Lotes y vencimiento, variantes de talla y color, kits | **Próximamente** | Reportes muestra «Por vencer · próximamente» |
+| Impuestos adicionales de bebidas y alcoholes | **Próximamente** | sección 6.3 de la especificación |
+| Cambiar de plan y pagar desde la app | **Próximamente** | Fase 4; hoy el plan lo asigna el dueño |
+| Apps en Play Store y App Store | **Próximamente** | Fase 4 |
+
+Todos los textos de la landing se escribieron contra esta tabla. Si una fila cambia, se revisan
+`src/textos/textos.ts` y `src/config/precios.ts`.
+
+## 18 · 2026-11-02 · Decisiones de contenido tomadas sin esperar al dueño
+
+- **«Prueba gratis» lleva a Contacto y abre WhatsApp.** Producción no existe, así que no hay a dónde
+  mandar a registrarse. Cuando exista, se cambia el destino en `Barra.astro`, `Portada.astro` y
+  `Planes.astro`. No se dice cuántos días dura la prueba: **el dueño debe definirlo.**
+- **Número de WhatsApp de ejemplo:** `56900000000` en `src/config/contacto.ts`. El dueño pone el real.
+- **PRECIOS DE EJEMPLO en los adicionales:** usuario $2.990, caja con usuario $7.990 y paquete de 1.000
+  productos $3.990, en `src/config/precios.ts`. El documento de beneficios no llegó y la base de la app
+  no trae precios. **El dueño debe confirmarlos antes de publicar.**
+- **Límites de los planes:** se usaron los de la app (Emprende: 1 caja, 3 usuarios, 2 ubicaciones,
+  1.000 productos; Pyme: 5, 15, 10 y 10.000). Los documentos mensuales (300 y 3.000) no se muestran
+  mientras el SII sea «Próximamente».
+- **«Sin contratos» y «sin permanencia»:** se mantiene la frase del dueño. La respuesta «no hay
+  permanencia mínima» es una lectura de esa frase y el dueño debe confirmarla.
+- **Plan Empresa a cotizar:** la especificación decía que no se ofrecía; manda la instrucción nueva del
+  dueño. Su texto dice «más de 5 cajas o más de 10 locales».
+- **Confianza sin logos ni testimonios,** porque no hay clientes: son cinco hechos comprobables.
+- **El botón flotante de WhatsApp es blanco y no verde,** por la regla «verde solo para cobrar y éxito».
+- **El nombre de la marca en la barra usa la fuente de la app;** en el pie va a todo el ancho con
+  Bricolage, como cierre de la página.
+- **Productos de ejemplo en «Para tu rubro»:** nombres genéricos sin marcas. Sus precios son ilustrativos.
+- **Página larga en el celular:** unas 14.500 px con todo, sobre todo por las capturas. **NO VERIFICADO**
+  si se siente larga: el dueño lo juzga en su celular.
+
+## 19 · 2026-11-02 · Rendimiento con la página completa: `content-visibility` y axe sobre todo
+
+- Al sumar las secciones, Lighthouse cayó de 100 a 91 (LCP 3,2 s) y el HTML subió de 32 a 92 KB.
+- **Causas y arreglos:** la regla que evita pedir las imágenes de los pasos quedó en el componente
+  equivocado al separar la portada (volvieron a pedirse antes de pintar); los estilos por componente
+  sumaban 17 KB (`scopedStyleStrategy: 'class'`); los códigos de barra pesaban 15 KB (un solo `path`
+  por etiqueta); y el mayor gasto era CPU: maquetar 14.000 px al abrir. `content-visibility: auto` en
+  las secciones lejanas lo evita.
+- **Resultado:** Lighthouse celular 99, LCP 2,0 s, HTML 75 KB (15 KB con gzip).
+- **Riesgo revisado:** `content-visibility` podría esconderle secciones a axe, lo que debilitaría la
+  prueba sin que nadie lo note. Se plantó texto de contraste 1:1 en `#planes` y `#contacto` y axe lo
+  marcó con y sin movimiento. La primera versión de esa comprobación falló, porque no recorría la
+  página, y dejó ver otro problema: las transiciones fuera de pantalla quedan congeladas y `enReposo()`
+  no terminaba. `enReposo()` ahora fuerza a renderizar todo antes de medir: axe mide la página completa.
+- Queda vigilado que los enlaces del menú lleguen a su sección aunque aún no esté renderizada.

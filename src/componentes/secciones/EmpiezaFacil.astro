@@ -1,0 +1,341 @@
+---
+// «Empieza fácil»: sin movimiento son tres pasos uno bajo otro; con movimiento, una escena fija.
+import cobroVuelto from '../../assets/app/cobro-vuelto-celular.png';
+import comprobante from '../../assets/app/comprobante-whatsapp-celular.png';
+import ventaCarrito from '../../assets/app/venta-carrito-celular.png';
+import { ventaDemo } from '../../config/demo';
+import { formatoPesos } from '../../config/precios';
+import { textos } from '../../textos/textos';
+import Telefono from '../Telefono.astro';
+
+const e = textos.empiezaFacil;
+const imagenesPasos = [ventaCarrito, cobroVuelto, comprobante];
+const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPasos[i], alt: p.alt }));
+---
+
+<section id="empieza" class="empieza" aria-labelledby="titulo-empieza" data-empieza>
+  <div class="marco empieza-marco">
+    <div class="empieza-encabezado">
+      <h2 id="titulo-empieza">{e.titulo}</h2>
+      <p>{e.bajada}</p>
+    </div>
+    <ol class="indicador" aria-hidden="true">
+      {
+        e.pasos.map((p) => (
+          <li data-indicador>
+            {p.corto}
+            <span class="indicador-barra" data-barra />
+          </li>
+        ))
+      }
+    </ol>
+    <div class="empieza-cuerpo">
+      <div class="escenario">
+        <Telefono class="escenario-telefono" decorativo pantallas={pantallasPasos} tamanos="(min-width: 1024px) 300px, 40vw" />
+      </div>
+      <ol class="pasos">
+        {
+          e.pasos.map((p, i) => (
+            <li class="paso" data-paso={i}>
+              <div class="paso-texto">
+                <h3>{p.titulo}</h3>
+                <p>{p.texto}</p>
+                {i === 1 && (
+                  <div class="extras">
+                    {e.billetes.map((b) => (
+                      <span class="billete cifra" data-extra>
+                        {b}
+                      </span>
+                    ))}
+                    <p class="vuelto" data-extra>
+                      <span>{e.vuelto}</span>
+                      <strong class="cifra">{formatoPesos(ventaDemo.cobro.vuelto)}</strong>
+                    </p>
+                  </div>
+                )}
+                {i === 2 && (
+                  <p class="enviado" data-extra>
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M3 8.5l3 3 7-7" />
+                    </svg>
+                    {e.enviado}
+                  </p>
+                )}
+              </div>
+              <Telefono class="paso-telefono" pantallas={[pantallasPasos[i]]} tamanos="(min-width: 1024px) 280px, 64vw" />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Empieza fácil (sin movimiento: los tres pasos uno bajo otro, cada uno con su pantalla) */
+  .empieza {
+    background: var(--color-campo);
+  }
+
+  .empieza-marco {
+    padding-block: clamp(72px, 12vw, 160px);
+  }
+
+  .empieza-encabezado h2 {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .empieza-encabezado p {
+    max-width: 40ch;
+    margin: 14px 0 0;
+    color: var(--color-texto-suave);
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  }
+
+  .indicador,
+  .escenario {
+    display: none;
+  }
+
+  .empieza-cuerpo {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .pasos {
+    display: grid;
+    gap: 64px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paso {
+    display: grid;
+    gap: 24px;
+    justify-items: start;
+  }
+
+  .paso h3 {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(2rem, 4.2vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .paso p {
+    max-width: 34ch;
+    margin: 14px 0 0;
+    color: var(--color-texto-suave);
+    font-size: 1.125rem;
+  }
+
+  .paso :global(.paso-telefono) {
+    --ancho-telefono: min(64vw, 280px);
+  }
+
+  .extras {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .billete {
+    padding: 10px 16px;
+    border-radius: 2px;
+    background: var(--color-secundario);
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .paso .vuelto {
+    display: grid;
+    flex-basis: 100%;
+    margin: 12px 0 0;
+    color: var(--color-exito-suave);
+  }
+
+  .vuelto span {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .vuelto strong {
+    font-family: var(--fuente-titulo);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .paso .enviado {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 10px 16px;
+    border-radius: 2px;
+    background: var(--color-exito-fondo);
+    color: var(--color-texto);
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .enviado svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (min-width: 1024px) {
+    .paso {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 64px;
+    }
+  }
+
+  /* Con movimiento, las pantallas de cada paso no se piden: la escena usa las suyas, y solo cuando se acerca. */
+  :global(.js-movimiento) .paso :global(.paso-telefono) {
+    display: none;
+  }
+
+  /* Con movimiento: una sola pantalla fija; los pasos se reemplazan en el mismo lugar. */
+  .empieza:global(.escena-fija) .empieza-marco {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    height: 100vh;
+    height: 100svh;
+    padding-block: clamp(20px, 4vh, 48px);
+  }
+
+  .empieza:global(.escena-fija) .empieza-encabezado h2 {
+    font-size: clamp(2rem, 4.4vw, 4rem);
+  }
+
+  .empieza:global(.escena-fija) .empieza-encabezado p {
+    display: none;
+  }
+
+  .empieza:global(.escena-fija) .indicador {
+    display: flex;
+    gap: 24px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-texto-suave);
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .indicador li {
+    position: relative;
+    padding-bottom: 10px;
+    transition: color 200ms ease;
+  }
+
+  .indicador li:global(.activo) {
+    color: var(--color-texto);
+  }
+
+  .indicador-barra {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-texto);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .empieza:global(.escena-fija) .empieza-cuerpo {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    min-height: 0;
+    margin-top: 16px;
+  }
+
+  .empieza:global(.escena-fija) .escenario {
+    display: flex;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+    --ancho-telefono: min(40vw, calc(44svh * 390 / 844));
+  }
+
+  .empieza:global(.escena-fija) .pasos {
+    position: relative;
+    display: block;
+  }
+
+  .empieza:global(.escena-fija) .paso {
+    position: absolute;
+    inset: 0 0 auto 0;
+  }
+
+  .empieza:global(.escena-fija) .paso :global(.paso-telefono) {
+    display: none;
+  }
+
+  .empieza:global(.escena-fija) .paso h3 {
+    font-size: clamp(1.75rem, 4vw, 3.75rem);
+  }
+
+  .empieza:global(.escena-fija) .paso p {
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+
+  .empieza:global(.escena-fija) .extras,
+  .empieza:global(.escena-fija) .paso .enviado {
+    margin-top: 12px;
+  }
+
+  .empieza:global(.escena-fija) .vuelto strong {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+  }
+
+  @media (min-width: 1024px) {
+    .empieza:global(.escena-fija) .empieza-cuerpo {
+      grid-template-columns: 5fr 7fr;
+      grid-template-rows: 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+      --ancho-telefono: min(300px, calc(70svh * 390 / 844));
+    }
+
+    .empieza:global(.escena-fija) .pasos {
+      height: 100%;
+    }
+
+    .empieza:global(.escena-fija) .paso {
+      inset: 50% 0 auto 0;
+      translate: 0 -50%;
+    }
+
+    .empieza:global(.escena-fija) .paso p {
+      font-size: 1.125rem;
+    }
+  }
+</style>

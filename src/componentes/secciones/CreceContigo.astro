@@ -1,0 +1,143 @@
+---
+import { formatoNumero, planes, type Limites } from '../../config/precios';
+import { textos } from '../../textos/textos';
+
+const t = textos.crece;
+const limitesDe = (id: string) => {
+  const plan = planes.find((p) => p.id === id);
+  return plan && !plan.aCotizar ? plan.limites : ({} as Limites);
+};
+const emprende = limitesDe('emprende');
+const pyme = limitesDe('pyme');
+---
+
+<section id="crece" class="seccion seccion-campo" aria-labelledby="titulo-crece">
+  <div class="marco">
+    <div data-aparece>
+      <h2 id="titulo-crece" class="seccion-titulo">{t.titulo}</h2>
+      <p class="seccion-bajada">{t.bajada}</p>
+    </div>
+
+    <table class="saltos" data-aparece>
+      <thead>
+        <tr>
+          <td></td>
+          <th scope="col">{t.entrada}</th>
+          <th scope="col">{t.salida}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          t.filas.map((f) => (
+            <tr>
+              <th scope="row">{f.nombre}</th>
+              <td class="cifra-grande">{formatoNumero(emprende[f.clave])}</td>
+              <td class="cifra-grande">{formatoNumero(pyme[f.clave])}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <div class="viene" data-aparece>
+      <h3>{t.vieneTitulo}</h3>
+      <ul>
+        {
+          t.viene.map((v) => (
+            <li>
+              <div class="viene-nombre">
+                <strong>{v.nombre}</strong>
+                <span class="pronto">{textos.proximamente}</span>
+              </div>
+              <p>{v.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .saltos {
+    width: 100%;
+    margin-top: clamp(40px, 6vw, 72px);
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .saltos thead th {
+    padding-bottom: 8px;
+    color: var(--color-texto-suave);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .saltos tbody th {
+    padding: 10px 12px 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  .saltos tbody td {
+    padding-block: 10px;
+    font-size: clamp(2rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    vertical-align: baseline;
+  }
+
+  .viene {
+    margin-top: clamp(56px, 8vw, 112px);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .viene ul {
+    display: grid;
+    gap: 24px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .viene-nombre {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    font-size: 1.125rem;
+  }
+
+  .viene p {
+    max-width: 46ch;
+    margin: 4px 0 0;
+    color: var(--color-texto-suave);
+  }
+
+  @media (min-width: 1024px) {
+    .saltos thead th:first-of-type,
+    .saltos td:first-child {
+      width: 30%;
+    }
+
+    .saltos tbody th {
+      font-size: 1.25rem;
+    }
+
+    .viene ul {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 64px;
+    }
+  }
+</style>
