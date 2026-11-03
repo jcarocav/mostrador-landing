@@ -49,8 +49,8 @@ const t = textos.control;
   </div>
 </section>
 
-<style>
-  h3 {
+<style is:global>
+  #control h3 {
     margin: 0;
     font-size: clamp(1.75rem, 3vw, 2.75rem);
     font-weight: 800;
@@ -58,44 +58,44 @@ const t = textos.control;
     letter-spacing: -0.03em;
   }
 
-  .control-texto p {
+  #control .control-texto p {
     max-width: 46ch;
     margin: 10px 0 0;
     font-size: 1.125rem;
   }
 
-  .control-stock {
+  #control .control-stock {
     display: grid;
     gap: 24px;
     margin-top: clamp(40px, 6vw, 72px);
   }
 
-  .control-par {
+  #control .control-par {
     display: grid;
     gap: 64px;
     margin-top: clamp(56px, 8vw, 112px);
   }
 
-  .control-caja {
+  #control .control-caja {
     display: grid;
     gap: 32px;
   }
 
-  .control-caja-telefono {
+  #control .control-caja-telefono {
     --ancho-telefono: min(56vw, 260px);
   }
 
-  .control-personas {
+  #control .control-personas {
     margin-top: 36px;
   }
 
-  .control-reportes {
+  #control .control-reportes {
     display: grid;
     gap: 24px;
     align-content: start;
   }
 
-  .control-texto .control-pronto {
+  #control .control-texto .control-pronto {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -106,28 +106,28 @@ const t = textos.control;
   }
 
   @media (min-width: 1024px) {
-    .control-stock {
+    #control .control-stock {
       grid-template-columns: 1fr;
     }
 
-    .control-stock .control-texto {
+    #control .control-stock .control-texto {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 48px;
       align-items: end;
     }
 
-    .control-stock .control-texto p {
+    #control .control-stock .control-texto p {
       margin: 0;
     }
 
-    .control-par {
+    #control .control-par {
       grid-template-columns: 1fr 1fr;
       gap: 64px;
       align-items: start;
     }
 
-    .control-caja {
+    #control .control-caja {
       grid-template-columns: 260px 1fr;
     }
   }

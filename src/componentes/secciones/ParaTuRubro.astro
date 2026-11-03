@@ -101,20 +101,20 @@ const r = textos.rubros;
   });
 </script>
 
-<style>
-  .rubros-cabeza {
+<style is:global>
+  #rubros .rubros-cabeza {
     display: grid;
     gap: 8px;
   }
 
-  .pestanas {
+  #rubros .pestanas {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
     margin-top: clamp(32px, 5vw, 56px);
   }
 
-  .pestana {
+  #rubros .pestana {
     min-height: 52px;
     padding: 8px 6px;
     border: 0;
@@ -130,59 +130,62 @@ const r = textos.rubros;
       color 160ms ease;
   }
 
-  .pestana[aria-selected='true'] {
+  #rubros .pestana[aria-selected='true'] {
     background: var(--color-accion);
     color: var(--color-accion-texto);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .pestana[aria-selected='false']:hover {
+    #rubros .pestana[aria-selected='false']:hover {
       background: var(--color-secundario);
     }
   }
 
   @media (min-width: 720px) {
-    .pestanas {
+    #rubros .pestanas {
       grid-template-columns: repeat(6, 1fr);
     }
 
-    .pestana {
+    #rubros .pestana {
       font-size: 1.0625rem;
     }
   }
 
-  .paneles {
+  #rubros .paneles {
     display: grid;
     gap: 56px;
     margin-top: clamp(32px, 4vw, 56px);
   }
 
-  .panel {
+  #rubros .panel {
     display: grid;
     gap: 32px;
   }
 
   /* Con JavaScript solo se ve la pestaña activa, y entra sin mover nada alrededor. */
-  :global(.js) .panel:not(.activo) {
+  .js #rubros .panel:not(.activo) {
     display: none;
   }
 
-  :global(.js) .panel.activo {
+  .js #rubros .panel.activo {
     transition:
       opacity 220ms var(--curva-salida),
-      transform 260ms var(--curva-salida);
+      transform 260ms var(--curva-salida)
+  }
 
-    @starting-style {
+  @starting-style {
+
+    .js #rubros .panel.activo {
       opacity: 0;
       transform: translateY(8px);
     }
-  }
+}
 
-  .panel:focus-visible {
+  #rubros .panel:focus-visible {
     outline-offset: 8px;
   }
 
-  h3 {
+  #rubros h3 {
     max-width: 18ch;
     margin: 0;
     font-size: clamp(2.25rem, 4.6vw, 4.25rem);
@@ -191,24 +194,24 @@ const r = textos.rubros;
     letter-spacing: -0.03em;
   }
 
-  .panel-texto > p:first-of-type {
+  #rubros .panel-texto > p:first-of-type {
     max-width: 46ch;
     margin: 16px 0 0;
     font-size: 1.125rem;
   }
 
-  .panel-rotulo {
+  #rubros .panel-rotulo {
     margin: 0;
     color: var(--color-texto-suave);
     font-size: 1rem;
     font-weight: 600;
   }
 
-  .panel-texto .panel-rotulo {
+  #rubros .panel-texto .panel-rotulo {
     margin-top: 28px;
   }
 
-  .panel-puntos {
+  #rubros .panel-puntos {
     display: grid;
     gap: 6px;
     margin: 8px 0 0;
@@ -218,7 +221,7 @@ const r = textos.rubros;
     font-weight: 600;
   }
 
-  .panel-etiquetas {
+  #rubros .panel-etiquetas {
     --ancho-etiqueta: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -226,7 +229,7 @@ const r = textos.rubros;
     margin-top: 10px;
   }
 
-  .panel-pronto {
+  #rubros .panel-pronto {
     display: grid;
     gap: 8px;
     margin: 20px 0 0;
@@ -234,7 +237,7 @@ const r = textos.rubros;
     list-style: none;
   }
 
-  .panel-pronto li {
+  #rubros .panel-pronto li {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -243,17 +246,17 @@ const r = textos.rubros;
   }
 
   @media (min-width: 1024px) {
-    .rubros-cabeza {
+    #rubros .rubros-cabeza {
       grid-template-columns: 1fr 1fr;
       align-items: end;
       gap: 48px;
     }
 
-    .paneles {
+    #rubros .paneles {
       min-height: 380px;
     }
 
-    .panel {
+    #rubros .panel {
       grid-template-columns: 7fr 5fr;
       gap: 64px;
       align-items: start;

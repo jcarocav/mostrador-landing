@@ -13,7 +13,7 @@ import { textos } from '../../textos/textos';
   </div>
 </footer>
 
-<style>
+<style is:global>
   .pie {
     padding-block: clamp(40px, 6vw, 72px) 88px;
     color: var(--color-texto-suave);
@@ -31,7 +31,7 @@ import { textos } from '../../textos/textos';
     letter-spacing: -0.045em;
   }
 
-  .pie-fila {
+  .pie .pie-fila {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -40,7 +40,7 @@ import { textos } from '../../textos/textos';
     margin-top: 24px;
   }
 
-  nav a {
+  .pie nav a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;

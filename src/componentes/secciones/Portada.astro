@@ -16,7 +16,7 @@ const { tamanos } = Astro.props;
 const t = textos.portada;
 ---
 
-<section class="portada marco" aria-labelledby="titulo-portada">
+<section id="portada" class="portada marco" aria-labelledby="titulo-portada">
   <h1 id="titulo-portada">
     {t.tituloLineas[0]}<br class="solo-celular" />
     {t.tituloLineas[1]}<br />
@@ -59,13 +59,13 @@ const t = textos.portada;
 </section>
 
 
-<style>
+<style is:global>
   /* Portada */
-  .portada {
+  #portada {
     padding-block: clamp(24px, 5vh, 64px) clamp(56px, 10vh, 120px);
   }
 
-  h1 {
+  #portada h1 {
     margin: 0;
     font-family: var(--fuente-titulo);
     font-size: clamp(2.75rem, 7.4vw, 7.25rem);
@@ -74,13 +74,13 @@ const t = textos.portada;
     letter-spacing: -0.035em;
   }
 
-  .portada-cuerpo {
+  #portada .portada-cuerpo {
     display: grid;
     gap: 40px;
     margin-top: clamp(28px, 4vw, 56px);
   }
 
-  .subtitulo {
+  #portada .subtitulo {
     max-width: 34ch;
     margin: 0;
     color: var(--color-texto-suave);
@@ -88,14 +88,14 @@ const t = textos.portada;
     line-height: 1.5;
   }
 
-  .acciones {
+  #portada .acciones {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 32px;
   }
 
-  .portada-escena {
+  #portada .portada-escena {
     --ancho-telefono: min(54vw, 300px);
     --ancho-etiqueta: 100%;
     position: relative;
@@ -105,26 +105,26 @@ const t = textos.portada;
     align-items: start;
   }
 
-  .etiquetas {
+  #portada .etiquetas {
     display: grid;
     gap: 12px;
     padding-top: 12%;
   }
 
-  .bloque-total {
+  #portada .bloque-total {
     grid-column: 1 / -1;
     display: grid;
     gap: 4px;
     margin: 8px 0 0;
   }
 
-  .bloque-total span {
+  #portada .bloque-total span {
     color: var(--color-texto-suave);
     font-size: 1rem;
     font-weight: 600;
   }
 
-  .bloque-total strong {
+  #portada .bloque-total strong {
     font-family: var(--fuente-titulo);
     font-size: clamp(3.5rem, 7vw, 7rem);
     font-weight: 800;
@@ -133,29 +133,29 @@ const t = textos.portada;
   }
 
   @media (min-width: 1024px) {
-    .portada-cuerpo {
+    #portada .portada-cuerpo {
       grid-template-columns: 4fr 8fr;
       gap: 48px;
       align-items: start;
     }
 
-    .portada-escena {
+    #portada .portada-escena {
       --ancho-telefono: 300px;
       grid-template-columns: 300px 1fr;
       grid-template-rows: auto 1fr;
       column-gap: 48px;
     }
 
-    .portada-escena :global(.portada-telefono) {
+    #portada .portada-escena .portada-telefono {
       grid-row: 1 / span 2;
     }
 
-    .etiquetas {
+    #portada .etiquetas {
       max-width: 240px;
       padding-top: 40px;
     }
 
-    .bloque-total {
+    #portada .bloque-total {
       grid-column: 2;
       align-self: start;
       margin: 32px 0 0;
@@ -163,34 +163,34 @@ const t = textos.portada;
   }
 
   /* Estados de la animación de la portada (solo con movimiento y JavaScript). */
-  :global(.js-movimiento) .portada-escena :global([data-estado]) {
+  .js-movimiento #portada .portada-escena [data-estado] {
     opacity: 0;
     transition: opacity 160ms ease;
   }
 
-  :global(.js-movimiento) .portada-escena :global(.escaneada [data-estado]) {
+  .js-movimiento #portada .portada-escena .escaneada [data-estado] {
     opacity: 1;
   }
 
-  :global(.js-movimiento) [data-total] {
+  .js-movimiento #portada [data-total] {
     opacity: 0;
     transition: opacity 160ms ease;
   }
 
-  :global(.js-movimiento) .contando [data-total] {
+  .js-movimiento #portada .contando [data-total] {
     opacity: 1;
   }
 
-  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='vacia']) {
+  .js-movimiento #portada .portada-escena:not(.terminada) .pantalla[data-pantalla='vacia'] {
     opacity: 1;
   }
 
-  :global(.js-movimiento) .portada-escena:not(.terminada) :global(.pantalla[data-pantalla='carrito']) {
+  .js-movimiento #portada .portada-escena:not(.terminada) .pantalla[data-pantalla='carrito'] {
     opacity: 0;
   }
 
   /* Con movimiento, las imágenes que aún no se ven no se piden: el navegador no baja un lazy oculto. */
-  :global(.js-movimiento) .portada-escena:not(.animando) :global(.pantalla[data-pantalla='carrito']) {
+  .js-movimiento #portada .portada-escena:not(.animando) .pantalla[data-pantalla='carrito'] {
     display: none;
   }
 </style>

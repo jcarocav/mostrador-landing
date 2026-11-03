@@ -13,6 +13,7 @@ test.describe('secciones', () => {
       'Nunca te deja parado',
       'Control real',
       'Crece contigo',
+      'Arma tu plan',
       'Planes y precios',
       'Confianza',
       'Preguntas frecuentes',

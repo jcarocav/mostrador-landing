@@ -23,13 +23,13 @@ const t = textos.confianza;
   </div>
 </section>
 
-<style>
-  .confianza {
+<style is:global>
+  #confianza .confianza {
     display: grid;
     gap: 40px;
   }
 
-  .confianza-lista {
+  #confianza .confianza-lista {
     display: grid;
     gap: 28px;
     margin: 0;
@@ -37,7 +37,7 @@ const t = textos.confianza;
     list-style: none;
   }
 
-  h3 {
+  #confianza h3 {
     margin: 0;
     font-size: clamp(1.75rem, 3.4vw, 3rem);
     font-weight: 800;
@@ -45,14 +45,14 @@ const t = textos.confianza;
     letter-spacing: -0.03em;
   }
 
-  .confianza-lista p {
+  #confianza .confianza-lista p {
     max-width: 52ch;
     margin: 6px 0 0;
     font-size: 1.125rem;
   }
 
   @media (min-width: 1024px) {
-    .confianza {
+    #confianza .confianza {
       grid-template-columns: 5fr 7fr;
       gap: 64px;
     }

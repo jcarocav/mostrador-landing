@@ -10,7 +10,10 @@ interface Props {
   descripcion?: string;
   /** false en páginas de trabajo que no deben salir en buscadores. */
   indexar?: boolean;
-  /** La imagen más grande de la primera pantalla: se pide antes que todo lo demás (es el LCP). */
+  /**
+   * La imagen más grande de la primera pantalla: se pide antes que todo lo demás (es el LCP). Si la hay,
+   * la fuente de los títulos no se precarga, para no competir con ella (DECISIONES.md #20).
+   */
   imagenPrincipal?: { srcset: string; sizes: string };
   colorTema?: string;
 }
@@ -41,10 +44,10 @@ const fuentes = `
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {
       imagenPrincipal && (
-        <link rel="preload" as="image" type="image/webp" imagesrcset={imagenPrincipal.srcset} imagesizes={imagenPrincipal.sizes} fetchpriority="high" />
+        <link rel="preload" as="image" type="image/avif" imagesrcset={imagenPrincipal.srcset} imagesizes={imagenPrincipal.sizes} fetchpriority="high" />
       )
     }
-    <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
+    {!imagenPrincipal && <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />}
     <style is:inline set:html={fuentes} />
     <style is:inline set:html={variablesCss} />
     <!--
@@ -70,7 +73,7 @@ const fuentes = `
   </body>
 </html>
 
-<style>
+<style is:global>
   .saltar {
     position: absolute;
     top: 8px;

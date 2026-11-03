@@ -67,6 +67,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 img,
 svg {
   display: block;
@@ -195,6 +199,14 @@ h3,
 
 .seccion-campo {
   background: var(--color-campo);
+}
+
+/* Un solo campo blanco en toda la página: el momento en que la persona responde. */
+.seccion-clara {
+  --color-foco: var(--marca-600);
+  --color-texto-suave: var(--marca-800);
+  background: var(--color-ficha);
+  color: var(--color-ficha-texto);
 }
 
 .seccion-titulo {
