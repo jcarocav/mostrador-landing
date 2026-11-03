@@ -20,6 +20,7 @@ Documentos: `DECISIONES.md` (decisiones numeradas) y este archivo.
 | Tipos / compilar | `npm run check` · `npm run build` |
 | Accesibilidad con axe (sobre `dist/`) | `npm run test:a11y` |
 | Lighthouse en celular (sobre `dist/`) | `npm run lighthouse` |
+| Capturas en PC, tablet y celular (sobre `dist/`) | `npm run capturas` |
 
 ## Reglas permanentes
 
@@ -30,8 +31,11 @@ Documentos: `DECISIONES.md` (decisiones numeradas) y este archivo.
 3. **Rama y PR por bloque.** Nunca push directo a `main` ni push forzado. Cada bloque va en su rama y
    su PR, con `DECISIONES.md` al día dentro de la misma rama.
 4. **CI en verde antes de fusionar:** se espera la CI del último commit del PR y se informa su
-   resultado. **Se fusiona solo con el OK explícito del dueño**, con
-   `gh pr merge <PR> --merge --match-head-commit <sha>`.
+   resultado. **Se fusiona solo con el OK explícito del dueño** (confirmado con una pregunta de un
+   clic justo antes), con `gh pr merge <PR> --merge --match-head-commit <sha>`. `main` está protegida
+   (DECISIONES.md #9): exige el check `verificar`, la rama al día y PR, también para administradores.
+   Nunca usar `--admin` ni tocar la protección sin el OK del dueño. Los PR de prueba se hacen con
+   cambios que no importe que entren, porque una protección puede fallar.
 5. **Nada se publica en internet sin el OK del dueño:** ni el sitio (GitHub Pages, Netlify, Vercel,
    Cloudflare u otro), ni dominios, ni informes. Lighthouse guarda sus informes en disco; nunca usar
    `temporary-public-storage` ni otro servicio que los suba.
@@ -72,9 +76,19 @@ Documentos: `DECISIONES.md` (decisiones numeradas) y este archivo.
 
 ## Skills de este proyecto
 
-- **Una sola skill de «gusto»: `taste-skill`** (pendiente de la decisión del dueño, ver
-  `DECISIONES.md`). No se mezcla con Impeccable, UI UX Pro Max ni Frontend Design, que quedan
-  desactivados para este proyecto en `.claude/settings.json`.
+- **Una sola skill de «gusto»: `taste-skill`** (se invoca como `design-taste-frontend`). No se mezcla
+  con Impeccable, UI UX Pro Max ni Frontend Design, que quedan desactivados para este proyecto en
+  `.claude/settings.json`.
+  - **Está instalado solo su `SKILL.md`** (DECISIONES.md #8): sin `scripts/`, `references/`,
+    `library/` ni `assets/`. Los pasos que piden `draw.mjs`, `assets.mjs`, `lint.mjs`, `inspect.mjs`
+    o `scenes.mjs` no se ejecutan: la dirección se decide a mano siguiendo sus reglas, las capturas se
+    sacan con `npm run capturas` y se revisan mirándolas. Nunca se descargan imágenes de colecciones
+    externas.
+  - **Nuestra paleta manda sobre sus reglas:** índigo es el color principal y el verde se usa solo
+    para cobrar y éxito, aunque taste-skill prohíba el violeta y el índigo.
+  - **Mandan los criterios del documento del dueño** cuando una regla de taste-skill choca con ellos:
+    movimientos de menos de un segundo y sin rebotes, pantallas reales de la app (no interfaces
+    dibujadas ni inventadas), el contenido y los textos que pide el dueño, y las reglas de este archivo.
 - **`emil-design-eng`**: criterio para diseñar cada animación (curvas, duraciones, cuándo no animar).
 - **`review-animations`**: revisión obligatoria de cada sección con movimiento. La skill trae
   `disable-model-invocation` (Claude no puede invocarla solo), así que Claude la aplica leyendo su

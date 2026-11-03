@@ -71,6 +71,13 @@ svg {
   border: 0;
 }
 
+/* Saltos de línea que solo valen en pantallas chicas (títulos de tres líneas cortas en celular). */
+@media (min-width: 720px) {
+  br.solo-celular {
+    display: none;
+  }
+}
+
 /* Con movimiento reducido la página queda completa y quieta. */
 @media (prefers-reduced-motion: reduce) {
   *,

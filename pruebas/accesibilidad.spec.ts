@@ -1,8 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
 // Páginas del sitio. Al agregar una, se agrega aquí y queda cubierta por todas las pruebas.
 const PAGINAS = ['/'];
+const PAGINA_ESCENA = '/';
 
 const ETIQUETAS_WCAG_21_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const GRAVES = new Set(['serious', 'critical']);
@@ -19,24 +20,90 @@ async function recorrer(page: Page) {
   });
 }
 
+/**
+ * Espera la página en reposo: nada cambia de opacidad, posición, recorte ni texto durante 300 ms.
+ * axe calcula el contraste con la opacidad del momento, así que medir en plena animación da resultados
+ * que dependen de la velocidad de la máquina (DECISIONES.md #12). Si la página no se aquieta, la prueba
+ * falla por tiempo: no se mide «como esté».
+ */
+async function enReposo(page: Page) {
+  await page.evaluate(async () => {
+    const foto = () =>
+      [...document.querySelectorAll('body *')]
+        .map((el) => {
+          const s = getComputedStyle(el);
+          return `${s.opacity}|${s.transform}|${s.clipPath}|${el.childElementCount ? '' : el.textContent}`;
+        })
+        .join('\n');
+    let anterior = foto();
+    for (let quietos = 0; quietos < 3; ) {
+      await new Promise((r) => setTimeout(r, 100));
+      const actual = foto();
+      quietos = actual === anterior && document.getAnimations().length === 0 ? quietos + 1 : 0;
+      anterior = actual;
+    }
+  });
+}
+
+async function revisarConAxe(page: Page, info: TestInfo, alcance?: string) {
+  const axe = new AxeBuilder({ page }).withTags(ETIQUETAS_WCAG_21_AA);
+  const { violations } = await (alcance ? axe.include(alcance) : axe).analyze();
+
+  // Las moderadas y menores no detienen la CI, pero quedan anotadas en el informe.
+  for (const v of violations.filter((v) => !GRAVES.has(v.impact ?? ''))) {
+    info.annotations.push({ type: `axe ${v.impact}`, description: `${v.id}: ${v.help} (${v.nodes.length})` });
+  }
+
+  const graves = violations
+    .filter((v) => GRAVES.has(v.impact ?? ''))
+    .map((v) => `${v.id} (${v.impact}): ${v.help} → ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
+  expect(graves, 'violaciones graves de WCAG 2.1 AA').toEqual([]);
+}
+
+test.describe('escena fija de «Empieza fácil» con movimiento', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto(PAGINA_ESCENA);
+  });
+
+  test('tras un desplazamiento rápido queda un solo paso visible', async ({ page }) => {
+    await recorrer(page);
+    await enReposo(page);
+    const visibles = await page
+      .locator('[data-paso]')
+      .evaluateAll((pasos) => pasos.filter((p) => Number(getComputedStyle(p).opacity) > 0).length);
+    expect(visibles).toBe(1);
+  });
+
+  // Con la página arriba, los pasos 2 y 3 están en opacidad 0 y axe no los ve: se detiene en cada uno.
+  test('axe WCAG 2.1 AA en cada paso, en reposo', async ({ page }, info) => {
+    const total = await page.locator('[data-paso]').count();
+    await recorrer(page);
+    for (let i = 0; i < total; i++) {
+      await page.evaluate(
+        ([i, total]) => {
+          const contenedor = document.querySelector('[data-empieza]')!.parentElement!;
+          const inicio = contenedor.getBoundingClientRect().top + window.scrollY;
+          const recorrido = contenedor.offsetHeight - window.innerHeight;
+          window.scrollTo(0, inicio + (recorrido * (i + 0.5)) / total);
+        },
+        [i, total],
+      );
+      await enReposo(page);
+      await expect(page.locator(`[data-paso="${i}"]`)).toHaveCSS('opacity', '1');
+      await revisarConAxe(page, info, '[data-empieza]');
+    }
+  });
+});
+
 for (const ruta of PAGINAS) {
   for (const movimiento of ['no-preference', 'reduce'] as const) {
     test(`axe WCAG 2.1 AA sin violaciones graves · ${ruta} · movimiento ${movimiento}`, async ({ page }, info) => {
       await page.emulateMedia({ reducedMotion: movimiento });
       await page.goto(ruta);
       await recorrer(page);
-
-      const { violations } = await new AxeBuilder({ page }).withTags(ETIQUETAS_WCAG_21_AA).analyze();
-
-      // Las moderadas y menores no detienen la CI, pero quedan anotadas en el informe.
-      for (const v of violations.filter((v) => !GRAVES.has(v.impact ?? ''))) {
-        info.annotations.push({ type: `axe ${v.impact}`, description: `${v.id}: ${v.help} (${v.nodes.length})` });
-      }
-
-      const graves = violations
-        .filter((v) => GRAVES.has(v.impact ?? ''))
-        .map((v) => `${v.id} (${v.impact}): ${v.help} → ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
-      expect(graves, 'violaciones graves de WCAG 2.1 AA').toEqual([]);
+      await enReposo(page);
+      await revisarConAxe(page, info);
     });
   }
 

@@ -1,0 +1,110 @@
+---
+// Etiqueta de producto con código de barras (las barras son decorativas, se dibujan del número).
+import { formatoPesos } from '../config/precios';
+import { textos } from '../textos/textos';
+
+interface Props {
+  nombre: string;
+  precio: number;
+  barras: string;
+  indice: number;
+  class?: string;
+}
+
+const { nombre, precio, barras, indice, class: clase } = Astro.props;
+
+// Anchos de barra y espacio a partir de cada dígito: siempre el mismo dibujo para el mismo número.
+const trazos: { x: number; ancho: number }[] = [];
+let x = 0;
+for (const digito of barras) {
+  const d = Number(digito);
+  const ancho = 1 + (d % 3);
+  trazos.push({ x, ancho });
+  x += ancho + 1 + ((d + 1) % 2);
+}
+const anchoTotal = x;
+---
+
+<div class:list={['etiqueta', clase]} data-etiqueta={indice}>
+  <p class="etiqueta-nombre">{nombre}</p>
+  <p class="etiqueta-precio">{formatoPesos(precio)}</p>
+  <div class="etiqueta-barras" aria-hidden="true">
+    <svg viewBox={`0 0 ${anchoTotal} 40`} preserveAspectRatio="none">
+      {trazos.map((t) => <rect x={t.x} y="0" width={t.ancho} height="40" />)}
+    </svg>
+    <span class="etiqueta-haz" data-haz></span>
+  </div>
+  <p class="etiqueta-estado" data-estado>
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" /></svg>
+    {textos.portada.escaneado}
+  </p>
+</div>
+
+<style>
+  .etiqueta {
+    width: var(--ancho-etiqueta, 180px);
+    padding: 14px 16px 12px;
+    border-radius: 14px;
+    background: var(--color-etiqueta, var(--color-superficie));
+    color: var(--color-etiqueta-texto, var(--color-texto));
+  }
+
+  .etiqueta p {
+    margin: 0;
+  }
+
+  .etiqueta-nombre {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .etiqueta-precio {
+    margin-top: 2px;
+    font-size: 1.125rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .etiqueta-barras {
+    position: relative;
+    height: 34px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .etiqueta-barras svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .etiqueta-haz {
+    position: absolute;
+    inset: -4px auto -4px 0;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--color-haz, var(--marca-500));
+    opacity: 0;
+  }
+
+  .etiqueta .etiqueta-estado {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-etiqueta-estado, var(--exito-700));
+  }
+
+  .etiqueta-estado svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

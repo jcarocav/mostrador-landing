@@ -82,3 +82,146 @@ comprobar se marca **NO VERIFICADO**.
 - `src/textos/textos.ts`: todos los textos visibles.
 - Astro trae telemetría activada por defecto: se apagó en este PC (`astro telemetry disable`) y en la
   CI (`ASTRO_TELEMETRY_DISABLED`).
+
+## 7 · 2026-10-25 · Stack aprobado por el dueño
+
+- Astro 7.4.2, GSAP 3.15.0 con ScrollTrigger y Lenis 1.3.27, con versión exacta. Se instalan en la
+  Fase 1 junto con las fuentes autoalojadas (`@fontsource-variable`, licencia OFL 1.1): Plus Jakarta Sans
+  (la fuente de la app) y Bricolage Grotesque (solo para probarla en la dirección B).
+
+## 8 · 2026-10-25 · taste-skill: solo el SKILL.md, y nuestras reglas mandan
+
+- **Decisión del dueño:** se instala solo `SKILL.md` (sin `scripts/`, `references/`, `library/` ni
+  `assets/`). Copia idéntica a la oficial, commit `12af471f627f866411b4bd785b19646d3672784c`, con
+  `LICENSE` y `ORIGEN.txt`. Las capturas las hace `scripts/capturas.mjs`.
+- **Qué hacía `taskkill` (para el registro):** `scripts/lib/cdp.mjs` corre
+  `taskkill /pid <pid> /T /F` con el **PID del Chrome que el mismo script abrió**. No cierra los Chrome
+  por nombre. `/T` cierra también los procesos hijos de ese Chrome y `/F` lo fuerza. El único riesgo,
+  muy improbable, es que Windows hubiera reasignado ese número de proceso a otro programa si ese Chrome
+  ya se había cerrado. Aparte, `sweepProfiles()` solo borra carpetas de perfil temporales que dejó una
+  corrida anterior (las suyas, marcadas con un archivo de dueño) y no cierra procesos.
+- **Precedencia:** nuestra paleta manda sobre taste-skill (índigo principal, verde solo para cobrar y
+  éxito, aunque la skill prohíbe el violeta y el índigo). Cuando una regla de la skill choca con los
+  criterios del documento del dueño (movimientos de menos de un segundo, sin rebotes, pantallas reales
+  de la app), mandan los criterios del documento. Queda escrito en `CLAUDE.md`.
+
+## 9 · 2026-10-25 · Protección de `main`
+
+- **Configurada (protección clásica de rama):** exige el check `verificar` de GitHub Actions (es el
+  trabajo que corre la CI completa), con la rama al día (`strict`); exige PR para todo cambio, con 0
+  aprobaciones porque el dueño trabaja solo; aplica también a los administradores; prohíbe push forzado
+  y borrar `main`.
+- **Comprobada el 2026-10-25:**
+  - push directo a `main`: rechazado (`GH006 Protected branch update failed`);
+  - PR con la CI **en curso**: la API de GitHub rechazó la fusión con la cuenta de administrador
+    (`Required status check "verificar" is in progress`, HTTP 405);
+  - PR con la CI **en rojo** (axe marcó `image-alt` crítico): rechazado
+    (`Required status check "verificar" is failing`);
+  - PR cuya CI corrió **antes** de que `main` avanzara: rechazado
+    (`Required status check "verificar" is expected`): hay que poner la rama al día y repetir la CI.
+- **Lo que no bloquea (aprendido a la mala):** un PR que aparece «atrasado» respecto de `main` pero
+  cuya CI se lanzó cuando `main` ya estaba en su último commit se considera al día, porque la CI de un
+  PR prueba la fusión con el `main` vigente. Así se fusionó por error el PR 3 de prueba: dejó en `main`
+  un archivo de texto, que el PR 4 quitó con el OK del dueño. No entró nada más.
+- Los PR de prueba 2 y 5 se cerraron sin fusionar y sus ramas se borraron.
+
+## 10 · 2026-10-25 · Fase 1: dos direcciones como prototipos navegables
+
+- Las dos direcciones se construyeron como páginas reales (`/direcciones/a/` y `/direcciones/b/`,
+  con `noindex`) para ver el movimiento de verdad, no solo imágenes. Cuando el dueño elija, la otra se
+  borra y la elegida pasa a ser la portada.
+- **Capturas reales de la app:** cuatro pantallas de `mostrador-dev`
+  (`docs/diseno/antes-despues/fase-2c-1`): venta vacía, carrito con dos productos, cobro con vuelto y
+  comprobante con WhatsApp. Se copiaron solo las imágenes, re-codificadas sin metadatos. Muestran datos
+  de prueba («Negocio E2E», «Vera Vendedora»), no de clientes. Miden 390 × 844 (1x): en celulares de
+  alta densidad se ven algo blandas. En la Fase 2 conviene sacarlas de nuevo a 3x y con un negocio de
+  ejemplo creíble, en vez de «Negocio E2E» (requiere que el dueño inicie sesión en la app local).
+- La animación de la portada usa los mismos productos y montos que las capturas
+  (`src/config/demo.ts`). Arranca recién cuando la escena se ve en pantalla.
+- **review-animations** se aplicó leyendo su SKILL.md y STANDARDS.md (la skill no se deja invocar
+  sola). Hallazgo corregido: en la B los pasos inactivos quedaban con `visibility: hidden` (vía
+  `autoAlpha` de GSAP) y un lector de pantalla solo habría leído el paso activo; ahora se ocultan solo
+  con opacidad.
+- Rendimiento: la B tiene 94 en Lighthouse celular (LCP 2,9 s, por la imagen del teléfono) contra 100
+  de la A (LCP 1,7 s). GSAP, ScrollTrigger y Lenis se cargan solo con movimiento permitido y después
+  de la primera pintura.
+- Las páginas de direcciones dan SEO 60-63 en Lighthouse porque llevan `noindex` a propósito (es un
+  aviso, no detiene la CI).
+- `sharp` (Apache-2.0) queda como dependencia de desarrollo explícita: ya venía con Astro y lo usan
+  las hojas de fotogramas.
+
+## 11 · 2026-11-02 · Dirección visual elegida: B, «Mostrador de noche»
+
+- **Decisión del dueño:** la landing sigue con la dirección B (`/direcciones/b/`): índigo profundo,
+  Bricolage Grotesque en los títulos, cifras grandes y «Empieza fácil» como escena fija con GSAP
+  ScrollTrigger, más Lenis en el PC.
+- **Motivo:** elección del dueño en el punto de control de la Fase 1, comparando las dos direcciones.
+- **Alternativa descartada:** dirección A, «Comprobante claro».
+- **Pendiente para la Fase 2, en una sesión nueva abierta en la carpeta de la landing:** borrar la
+  dirección A, pasar la B a la portada y quitar el índice `/direcciones/`, como dice la decisión 10.
+  Esta decisión no cambia código: las dos direcciones siguen en la rama `fase-1`. El PR 6 sigue en
+  borrador.
+
+## 12 · 2026-11-02 · Falla de contraste en la CI del PR 6: dos causas, las dos arregladas
+
+- **Síntoma:** la CI falló en `2a583ce` con `color-contrast` en `li[data-paso="2"] h3` de
+  `/direcciones/b/` (celular, con movimiento) y había pasado en `9174385`. Entre esos commits solo
+  cambió `DECISIONES.md`, así que el código era el mismo.
+- **Reproducción:** en este PC, 60 repeticiones de la prueba pasaron. Con la misma secuencia y la CPU
+  frenada por Chrome (`Emulation.setCPUThrottlingRate`), midiendo opacidades antes, después y 1,5 s
+  después de axe, 30 corridas por velocidad:
+
+  | CPU | axe de inmediato con falla | axe en reposo con falla | Opacidades en reposo |
+  |---|---|---|---|
+  | normal | 1 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+  | 4 veces más lenta | 30 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+  | 8 veces más lenta | 0 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+
+- **Causa 1, la que se sospechaba (confirmada): axe mide durante el desvanecimiento.** La prueba volvía
+  arriba y lanzaba axe de inmediato, y el paso 3 seguía apagándose. axe calcula el contraste con la
+  opacidad del momento: midió el h3 casi transparente (1,01 a 1,09 contra un mínimo de 3:1). Si axe
+  llegaba al título con el paso aún visible, pero ya casi apagado, fallaba; si llegaba antes o después,
+  no. Por eso pasaba o fallaba según la velocidad de la máquina. A velocidad normal falla poco. Que a
+  8x no falle sería porque axe tarda tanto que llega al título con el paso ya apagado: **NO VERIFICADO**,
+  es la lectura de esos datos, sin medir el instante exacto.
+- **Causa 2, que nadie sospechaba y es un defecto real de la página: dos pasos quedaban visibles.**
+  Al desplazarse rápido, `mostrar()` apagaba el paso anterior en 0,18 s, pero la entrada de ese mismo
+  paso, de 0,42 s, seguía corriendo y lo volvía a dejar en opacidad 1. El texto de dos pasos quedaba
+  encimado hasta que el paso cambiaba otra vez. Pasaba en todas las corridas y en celular y en PC. axe
+  no lo marcaba porque ambos textos tienen buen contraste por separado.
+- **Arreglo de la página:** `mostrar()` cancela la línea de tiempo anterior antes de empezar la nueva y
+  apaga todos los pasos que no son el actual, no solo el anterior.
+- **Arreglo de la prueba:** axe mide con la página en reposo. `enReposo()` espera a que ningún elemento
+  cambie de opacidad, posición, recorte ni texto durante 300 ms y a que no quede ninguna animación
+  activa. Si la página nunca se aquieta, la prueba falla por tiempo: no se mide «como esté».
+- **La prueba quedó más exigente, no menos:**
+  - agrega «tras un desplazamiento rápido queda un solo paso visible», que falló en celular y PC antes
+    del arreglo (recibió 2, esperaba 1);
+  - agrega axe en reposo en cada uno de los tres pasos: antes, con movimiento, axe solo veía el primero
+    porque los otros estaban en opacidad 0.
+- **Comprobado después del arreglo:** en reposo `1, 0, 0` en 60 de 60 corridas; la prueba real, con
+  `enReposo()`, 40 de 40 a velocidad normal, 40 de 40 a 4x y 40 de 40 a 8x; suite completa 28 de 28. Sin
+  la espera, axe sigue fallando (33 de 60), o sea que la causa 1 existe por sí sola.
+- **Alternativas descartadas:** subir `retries` (escondería la falla), una espera fija de 1,5 s (se
+  rompe en una máquina lenta o con una animación más larga) y excluir la escena de axe (debilita la
+  prueba).
+
+## 13 · 2026-11-02 · Cierre de la Fase 1: la B pasa a la portada y sale la A
+
+- **Decisión del dueño:** el PR 6 lleva a `main` solo la dirección B y lo compartido. Se borran
+  `/direcciones/a/`, el índice `/direcciones/` y sus textos. La B pasa a `/` sin `noindex`, y la página
+  provisoria de la Fase 0 desaparece. `src/scripts/direccion-b.ts` pasa a llamarse `escenas.ts`.
+- **Cómo era la dirección A, «Comprobante claro», por si se quiere recuperar** (el código completo
+  queda en el commit `9174385`, archivo `src/pages/direcciones/a.astro`):
+  - **Color:** fondo claro `--neutro-100`, tarjetas blancas, texto `--neutro-900`, banda de «Empieza
+    fácil» en `--marca-50`; botón principal índigo.
+  - **Tipografía:** solo Plus Jakarta Sans (la fuente de la app), peso 800, títulos de hasta 100 px con
+    tracking de -0.045em.
+  - **Forma:** botones de borde completamente redondo y etiquetas con esquinas de 14 px.
+  - **Portada:** a la izquierda el título y los botones; a la derecha dos etiquetas de producto, el
+    celular al centro y un comprobante blanco. Al escanear cada etiqueta, el producto vuela al celular,
+    aparece su línea en el comprobante y el total sube. El comprobante era el hilo de la página.
+  - **Empieza fácil:** el celular quedaba fijo con `position: sticky` y los pasos seguían su flujo
+    normal al lado. Una franja de lectura con `IntersectionObserver` marcaba el paso activo con una
+    barra índigo vertical. No usaba GSAP ni Lenis: era solo CSS y un observador.
+  - **Rendimiento:** 100 en Lighthouse celular (LCP 1,7 s) contra 94 de la B.
