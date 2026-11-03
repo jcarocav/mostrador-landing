@@ -18,19 +18,19 @@ const t = textos.preguntas;
   </div>
 </section>
 
-<style>
-  .lista {
+<style is:global>
+  #preguntas .lista {
     display: grid;
     gap: 4px;
     margin-top: clamp(32px, 5vw, 56px);
   }
 
-  details {
+  #preguntas details {
     border-radius: 2px;
     background: var(--color-superficie);
   }
 
-  summary {
+  #preguntas summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -43,12 +43,12 @@ const t = textos.preguntas;
     list-style: none;
   }
 
-  summary::-webkit-details-marker {
+  #preguntas summary::-webkit-details-marker {
     display: none;
   }
 
   /* Un «+» que se vuelve «×» al abrir: dice el estado con su forma, no con color. */
-  summary::after {
+  #preguntas summary::after {
     content: '+';
     flex: none;
     font-size: 1.75rem;
@@ -57,11 +57,11 @@ const t = textos.preguntas;
     transition: transform 180ms var(--curva-salida);
   }
 
-  details[open] summary::after {
+  #preguntas details[open] summary::after {
     transform: rotate(45deg);
   }
 
-  details p {
+  #preguntas details p {
     max-width: 68ch;
     margin: 0;
     padding: 0 20px 20px;
@@ -69,7 +69,7 @@ const t = textos.preguntas;
   }
 
   @media (min-width: 1024px) {
-    .lista {
+    #preguntas .lista {
       grid-template-columns: 1fr 1fr;
       align-items: start;
       gap: 4px 12px;

@@ -24,12 +24,12 @@ const t = textos.privacidad;
   <Pie />
 </Base>
 
-<style>
+<style is:global>
   .privacidad {
     padding-block: clamp(32px, 6vw, 72px) clamp(56px, 8vw, 96px);
   }
 
-  h1 {
+  .privacidad h1 {
     margin: 0;
     font-size: clamp(3rem, 8vw, 6rem);
     font-weight: 800;
@@ -37,7 +37,7 @@ const t = textos.privacidad;
     letter-spacing: -0.035em;
   }
 
-  h2 {
+  .privacidad h2 {
     margin: clamp(32px, 4vw, 48px) 0 0;
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-weight: 800;
@@ -45,17 +45,17 @@ const t = textos.privacidad;
     letter-spacing: -0.03em;
   }
 
-  p {
+  .privacidad p {
     max-width: 62ch;
     margin: 10px 0 0;
     font-size: 1.125rem;
   }
 
-  main > p {
+  .privacidad > p {
     margin-top: 40px;
   }
 
-  a {
+  .privacidad a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;

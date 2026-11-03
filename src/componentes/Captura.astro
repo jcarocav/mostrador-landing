@@ -1,8 +1,8 @@
 ---
 // Captura real del portal en el PC, en varios tamaños. Las de celular van dentro de Telefono.
 import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
-import { ANCHOS_PC, CALIDAD_CAPTURA } from '../config/imagenes';
+import { Picture } from 'astro:assets';
+import { ANCHOS_PC, CALIDAD_CAPTURA, FORMATOS_CAPTURA } from '../config/imagenes';
 
 interface Props {
   src: ImageMetadata;
@@ -14,9 +14,20 @@ interface Props {
 const { src, alt, tamanos, class: clase } = Astro.props;
 ---
 
-<Image class:list={['captura', clase]} {src} {alt} widths={ANCHOS_PC} sizes={tamanos} format="webp" quality={CALIDAD_CAPTURA} loading="lazy" decoding="async" />
+<Picture
+  class:list={['captura', clase]}
+  {src}
+  {alt}
+  widths={ANCHOS_PC}
+  sizes={tamanos}
+  formats={[...FORMATOS_CAPTURA]}
+  fallbackFormat="webp"
+  quality={CALIDAD_CAPTURA.avif}
+  loading="lazy"
+  decoding="async"
+/>
 
-<style>
+<style is:global>
   .captura {
     width: 100%;
     height: auto;

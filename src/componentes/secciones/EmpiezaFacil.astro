@@ -71,17 +71,17 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   </div>
 </section>
 
-<style>
+<style is:global>
   /* Empieza fácil (sin movimiento: los tres pasos uno bajo otro, cada uno con su pantalla) */
-  .empieza {
+  #empieza {
     background: var(--color-campo);
   }
 
-  .empieza-marco {
+  #empieza .empieza-marco {
     padding-block: clamp(72px, 12vw, 160px);
   }
 
-  .empieza-encabezado h2 {
+  #empieza .empieza-encabezado h2 {
     margin: 0;
     font-family: var(--fuente-titulo);
     font-size: clamp(2.5rem, 6vw, 5.5rem);
@@ -90,23 +90,23 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     letter-spacing: -0.035em;
   }
 
-  .empieza-encabezado p {
+  #empieza .empieza-encabezado p {
     max-width: 40ch;
     margin: 14px 0 0;
     color: var(--color-texto-suave);
     font-size: clamp(1.125rem, 1.6vw, 1.375rem);
   }
 
-  .indicador,
-  .escenario {
+  #empieza .indicador,
+#empieza .escenario {
     display: none;
   }
 
-  .empieza-cuerpo {
+  #empieza .empieza-cuerpo {
     margin-top: clamp(40px, 6vw, 72px);
   }
 
-  .pasos {
+  #empieza .pasos {
     display: grid;
     gap: 64px;
     margin: 0;
@@ -114,13 +114,13 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     list-style: none;
   }
 
-  .paso {
+  #empieza .paso {
     display: grid;
     gap: 24px;
     justify-items: start;
   }
 
-  .paso h3 {
+  #empieza .paso h3 {
     margin: 0;
     font-family: var(--fuente-titulo);
     font-size: clamp(2rem, 4.2vw, 3.75rem);
@@ -129,18 +129,18 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     letter-spacing: -0.03em;
   }
 
-  .paso p {
+  #empieza .paso p {
     max-width: 34ch;
     margin: 14px 0 0;
     color: var(--color-texto-suave);
     font-size: 1.125rem;
   }
 
-  .paso :global(.paso-telefono) {
+  #empieza .paso .paso-telefono {
     --ancho-telefono: min(64vw, 280px);
   }
 
-  .extras {
+  #empieza .extras {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -148,7 +148,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     margin-top: 24px;
   }
 
-  .billete {
+  #empieza .billete {
     padding: 10px 16px;
     border-radius: 2px;
     background: var(--color-secundario);
@@ -156,19 +156,19 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     font-weight: 700;
   }
 
-  .paso .vuelto {
+  #empieza .paso .vuelto {
     display: grid;
     flex-basis: 100%;
     margin: 12px 0 0;
     color: var(--color-exito-suave);
   }
 
-  .vuelto span {
+  #empieza .vuelto span {
     font-size: 1rem;
     font-weight: 600;
   }
 
-  .vuelto strong {
+  #empieza .vuelto strong {
     font-family: var(--fuente-titulo);
     font-size: clamp(3rem, 5vw, 4.5rem);
     font-weight: 800;
@@ -176,7 +176,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     letter-spacing: -0.03em;
   }
 
-  .paso .enviado {
+  #empieza .paso .enviado {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -189,7 +189,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     font-weight: 700;
   }
 
-  .enviado svg {
+  #empieza .enviado svg {
     width: 18px;
     height: 18px;
     fill: none;
@@ -200,7 +200,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   }
 
   @media (min-width: 1024px) {
-    .paso {
+    #empieza .paso {
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 64px;
@@ -208,12 +208,12 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   }
 
   /* Con movimiento, las pantallas de cada paso no se piden: la escena usa las suyas, y solo cuando se acerca. */
-  :global(.js-movimiento) .paso :global(.paso-telefono) {
+  .js-movimiento #empieza .paso .paso-telefono {
     display: none;
   }
 
   /* Con movimiento: una sola pantalla fija; los pasos se reemplazan en el mismo lugar. */
-  .empieza:global(.escena-fija) .empieza-marco {
+  #empieza.escena-fija .empieza-marco {
     display: grid;
     grid-template-rows: auto auto 1fr;
     height: 100vh;
@@ -221,15 +221,15 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     padding-block: clamp(20px, 4vh, 48px);
   }
 
-  .empieza:global(.escena-fija) .empieza-encabezado h2 {
+  #empieza.escena-fija .empieza-encabezado h2 {
     font-size: clamp(2rem, 4.4vw, 4rem);
   }
 
-  .empieza:global(.escena-fija) .empieza-encabezado p {
+  #empieza.escena-fija .empieza-encabezado p {
     display: none;
   }
 
-  .empieza:global(.escena-fija) .indicador {
+  #empieza.escena-fija .indicador {
     display: flex;
     gap: 24px;
     margin: 16px 0 0;
@@ -240,17 +240,17 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     font-weight: 700;
   }
 
-  .indicador li {
+  #empieza .indicador li {
     position: relative;
     padding-bottom: 10px;
     transition: color 200ms ease;
   }
 
-  .indicador li:global(.activo) {
+  #empieza .indicador li.activo {
     color: var(--color-texto);
   }
 
-  .indicador-barra {
+  #empieza .indicador-barra {
     position: absolute;
     left: 0;
     right: 0;
@@ -262,7 +262,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     transform-origin: left;
   }
 
-  .empieza:global(.escena-fija) .empieza-cuerpo {
+  #empieza.escena-fija .empieza-cuerpo {
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 16px;
@@ -270,50 +270,50 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     margin-top: 16px;
   }
 
-  .empieza:global(.escena-fija) .escenario {
+  #empieza.escena-fija .escenario {
     display: flex;
     justify-content: center;
     min-height: 0;
   }
 
-  .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+  #empieza.escena-fija .escenario .escenario-telefono {
     --ancho-telefono: min(40vw, calc(44svh * 390 / 844));
   }
 
-  .empieza:global(.escena-fija) .pasos {
+  #empieza.escena-fija .pasos {
     position: relative;
     display: block;
   }
 
-  .empieza:global(.escena-fija) .paso {
+  #empieza.escena-fija .paso {
     position: absolute;
     inset: 0 0 auto 0;
   }
 
-  .empieza:global(.escena-fija) .paso :global(.paso-telefono) {
+  #empieza.escena-fija .paso .paso-telefono {
     display: none;
   }
 
-  .empieza:global(.escena-fija) .paso h3 {
+  #empieza.escena-fija .paso h3 {
     font-size: clamp(1.75rem, 4vw, 3.75rem);
   }
 
-  .empieza:global(.escena-fija) .paso p {
+  #empieza.escena-fija .paso p {
     margin-top: 8px;
     font-size: 1rem;
   }
 
-  .empieza:global(.escena-fija) .extras,
-  .empieza:global(.escena-fija) .paso .enviado {
+  #empieza.escena-fija .extras,
+#empieza.escena-fija .paso .enviado {
     margin-top: 12px;
   }
 
-  .empieza:global(.escena-fija) .vuelto strong {
+  #empieza.escena-fija .vuelto strong {
     font-size: clamp(2.25rem, 5vw, 4.5rem);
   }
 
   @media (min-width: 1024px) {
-    .empieza:global(.escena-fija) .empieza-cuerpo {
+    #empieza.escena-fija .empieza-cuerpo {
       grid-template-columns: 5fr 7fr;
       grid-template-rows: 1fr;
       gap: 64px;
@@ -321,20 +321,20 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
       margin-top: 24px;
     }
 
-    .empieza:global(.escena-fija) .escenario :global(.escenario-telefono) {
+    #empieza.escena-fija .escenario .escenario-telefono {
       --ancho-telefono: min(300px, calc(70svh * 390 / 844));
     }
 
-    .empieza:global(.escena-fija) .pasos {
+    #empieza.escena-fija .pasos {
       height: 100%;
     }
 
-    .empieza:global(.escena-fija) .paso {
+    #empieza.escena-fija .paso {
       inset: 50% 0 auto 0;
       translate: 0 -50%;
     }
 
-    .empieza:global(.escena-fija) .paso p {
+    #empieza.escena-fija .paso p {
       font-size: 1.125rem;
     }
   }

@@ -2,6 +2,7 @@
 // Portada de la landing: dirección B, «Mostrador de noche» (DECISIONES.md #11).
 import { getImage } from 'astro:assets';
 import ventaVacia from '../assets/app/venta-vacia-celular.png';
+import ArmaTuPlan from '../componentes/secciones/ArmaTuPlan.astro';
 import Barra from '../componentes/secciones/Barra.astro';
 import Confianza from '../componentes/secciones/Confianza.astro';
 import Contacto from '../componentes/secciones/Contacto.astro';
@@ -19,7 +20,7 @@ import Base from '../layouts/Base.astro';
 
 // El celular de la portada es el LCP: su primera pantalla se precarga con el mismo srcset de la imagen.
 const tamanosPortada = '(min-width: 1024px) 300px, 54vw';
-const lcp = await getImage({ src: ventaVacia, widths: ANCHOS_CELULAR, format: 'webp', quality: CALIDAD_CAPTURA });
+const lcp = await getImage({ src: ventaVacia, widths: ANCHOS_CELULAR, format: 'avif', quality: CALIDAD_CAPTURA.avif });
 ---
 
 <Base imagenPrincipal={{ srcset: lcp.srcSet.attribute, sizes: tamanosPortada }}>
@@ -31,6 +32,7 @@ const lcp = await getImage({ src: ventaVacia, widths: ANCHOS_CELULAR, format: 'w
     <NuncaParado />
     <ControlReal />
     <CreceContigo />
+    <ArmaTuPlan />
     <Planes />
     <Confianza />
     <Preguntas />

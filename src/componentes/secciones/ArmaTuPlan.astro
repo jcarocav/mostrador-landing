@@ -1,0 +1,460 @@
+---
+// «Arma tu plan»: nueve preguntas y el plan recomendado. Todo se calcula en el navegador
+// (src/scripts/armador.ts) y nada se guarda ni se envía; solo WhatsApp abre un enlace, si la persona quiere.
+import { enlaceWhatsApp, WHATSAPP } from '../../config/contacto';
+import { adicionales, formatoPesos, MESES_PROMOCION, planes } from '../../config/precios';
+import { textos } from '../../textos/textos';
+
+const t = textos.armador;
+const r = t.resultado;
+const total = t.preguntas.length;
+
+// Lo que el script necesita para escribir el resultado y el mensaje. Son datos, no código: van en JSON.
+const datos = {
+  whatsapp: WHATSAPP,
+  aCotizar: r.aCotizar,
+  planes: planes.map((p) => ({ id: p.id, nombre: p.nombre })),
+  adicionales: adicionales.map((a) => ({ id: a.id, nombre: a.nombre })),
+  preguntas: t.preguntas.map((p) => ({ id: p.id, corto: p.corto, opciones: p.opciones })),
+  titulos: Object.fromEntries(planes.map((p) => [p.id, r.titulo(p.nombre)])),
+  frases: { ...r.planes, empresa: r.empresa },
+  notas: r.notas,
+  plantillas: {
+    avance: t.avance('{a}', '{t}'),
+    promocion: r.totalPromocion(MESES_PROMOCION),
+    despues: r.totalDespues(MESES_PROMOCION + 1, '{m}'),
+    conIva: r.totalConIva('{p}', '{n}'),
+    mensajeInicio: t.mensaje.inicio,
+    mensajePlan: t.mensaje.plan('{p}'),
+    mensajeAdicionales: t.mensaje.adicionales('{l}'),
+    mensajeTotal: t.mensaje.total('{p}', '{n}', MESES_PROMOCION),
+    mensajeProbar: t.mensaje.probar('{p}'),
+  },
+};
+---
+
+<section id="arma-tu-plan" class="seccion seccion-clara" aria-labelledby="titulo-plan">
+  <div class="marco armador-marco">
+    <div class="armador-cabeza" data-aparece>
+      <h2 id="titulo-plan" class="seccion-titulo">{t.titulo}</h2>
+      <p class="seccion-bajada">{t.bajada}</p>
+    </div>
+
+    <p class="armador-sin-js">
+      {t.sinJavascript}
+      <a href={enlaceWhatsApp(t.mensaje.inicio)} rel="noopener">{textos.contacto.boton}</a>
+    </p>
+
+    <div class="armador" data-armador>
+      <div class="avance-fila">
+        <p class="avance-texto" data-avance-texto aria-live="polite">{t.avance(1, total)}</p>
+        <button class="atras" type="button" data-atras hidden>{t.atras}</button>
+      </div>
+      <div class="avance" role="progressbar" aria-label={t.avanceEtiqueta} aria-valuemin="0" aria-valuemax={total} aria-valuenow="0" data-avance>
+        <span class="avance-barra" data-avance-barra></span>
+      </div>
+
+      <div class="preguntas">
+        {
+          t.preguntas.map((p, i) => (
+            <div class="pregunta" role="group" aria-labelledby={`pregunta-${p.id}`} data-pregunta={p.id} hidden={i !== 0}>
+              <h3 id={`pregunta-${p.id}`} tabindex="-1">
+                {p.texto}
+              </h3>
+              <div class="opciones">
+                {p.opciones.map((o) => (
+                  <button class="opcion" type="button" data-opcion={o.id} aria-pressed="false">
+                    {o.texto}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="resultado" data-resultado hidden>
+        <div class="resultado-plan">
+          <h3 tabindex="-1" data-resultado-titulo></h3>
+          <p class="resultado-frase" data-resultado-frase></p>
+          <ul class="resultado-notas" data-resultado-notas></ul>
+        </div>
+
+        <div class="resultado-cuenta">
+          <div data-bloque-adicionales>
+            <p class="resultado-rotulo">{r.adicionalesTitulo}</p>
+            <ul class="adicionales">
+              {
+                adicionales.map((a) => (
+                  <li>
+                    <label class="interruptor">
+                      <span class="interruptor-texto">
+                        <strong>{a.nombre}</strong>
+                        <span>{a.detalle}</span>
+                        <span class="cifra">{formatoPesos(a.precioMensual)} + IVA al mes</span>
+                      </span>
+                      <input type="checkbox" role="switch" data-adicional={a.id} />
+                      <span class="interruptor-riel" aria-hidden="true" />
+                    </label>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="total" aria-live="polite" data-total-plan>
+            <p class="resultado-rotulo">{r.totalTitulo}</p>
+            <p class="total-monto cifra cifra-grande" data-total-monto></p>
+            <p class="total-unidad" data-total-unidad></p>
+            <p class="total-despues" data-total-despues></p>
+            <p class="total-iva" data-total-iva></p>
+          </div>
+
+          <div class="resultado-acciones">
+            <a class="boton boton-oscuro" href={enlaceWhatsApp('')} rel="noopener" data-enlace-probar>{r.probar}</a>
+            <a class="boton boton-claro" href={enlaceWhatsApp('')} rel="noopener" data-enlace-asesoren>{r.asesoren}</a>
+            <button class="reiniciar" type="button" data-reiniciar>{r.reiniciar}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="application/json" data-armador-datos set:html={JSON.stringify(datos)} />
+  </div>
+</section>
+
+<script>
+  import '../../scripts/armador';
+</script>
+
+<style is:global>
+  #arma-tu-plan .armador-marco {
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+  }
+
+  #arma-tu-plan .armador-cabeza {
+    display: grid;
+    gap: 8px;
+  }
+
+  #arma-tu-plan .armador-sin-js a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-left: 8px;
+    color: inherit;
+    font-weight: 700;
+  }
+
+  #arma-tu-plan .armador {
+    display: none;
+  }
+
+  .js #arma-tu-plan .armador {
+    display: block;
+  }
+
+  .js #arma-tu-plan .armador-sin-js {
+    display: none;
+  }
+
+  #arma-tu-plan .avance-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 44px;
+  }
+
+  #arma-tu-plan .avance-texto {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  #arma-tu-plan .atras,
+#arma-tu-plan .reiniciar {
+    min-height: 44px;
+    padding-inline: 12px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  #arma-tu-plan .avance {
+    overflow: hidden;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 2px;
+    background: var(--marca-100);
+  }
+
+  #arma-tu-plan .avance-barra {
+    display: block;
+    height: 100%;
+    background: var(--marca-600);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms var(--curva-salida);
+  }
+
+  #arma-tu-plan .preguntas {
+    margin-top: clamp(28px, 4vw, 48px);
+  }
+
+  #arma-tu-plan .pregunta {
+    transition:
+      opacity 180ms var(--curva-salida),
+      transform 220ms var(--curva-salida)
+  }
+
+  @starting-style {
+
+    #arma-tu-plan .pregunta {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+}
+
+  #arma-tu-plan h3 {
+    margin: 0;
+    font-size: clamp(2rem, 4.4vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  #arma-tu-plan h3:focus {
+    outline: none;
+  }
+
+  #arma-tu-plan .opciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 8px;
+    margin-top: clamp(20px, 3vw, 32px);
+  }
+
+  #arma-tu-plan .opcion {
+    min-height: 72px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 2px;
+    background: var(--marca-100);
+    color: var(--color-ficha-texto);
+    font: inherit;
+    font-size: 1.1875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      transform var(--duracion-presion) var(--curva-salida),
+      background-color var(--duracion-presion) ease;
+  }
+
+  #arma-tu-plan .opcion:active {
+    transform: scale(0.97);
+  }
+
+  #arma-tu-plan .opcion[aria-pressed='true'] {
+    background: var(--color-ficha-texto);
+    color: var(--color-ficha);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #arma-tu-plan .opcion[aria-pressed='false']:hover {
+      background: var(--marca-200);
+    }
+  }
+
+  #arma-tu-plan .resultado {
+    display: grid;
+    gap: 32px;
+    margin-top: clamp(28px, 4vw, 48px);
+    transition:
+      opacity 220ms var(--curva-salida),
+      transform 260ms var(--curva-salida)
+  }
+
+  @starting-style {
+
+    #arma-tu-plan .resultado {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+}
+
+  #arma-tu-plan .resultado-frase {
+    max-width: 44ch;
+    margin: 12px 0 0;
+    font-size: 1.125rem;
+  }
+
+  #arma-tu-plan .resultado-notas {
+    display: grid;
+    gap: 8px;
+    max-width: 52ch;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #arma-tu-plan .resultado-rotulo {
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+
+  #arma-tu-plan .adicionales {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #arma-tu-plan .interruptor {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 56px;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 2px;
+    background: var(--marca-50);
+    cursor: pointer;
+  }
+
+  #arma-tu-plan .interruptor-texto {
+    display: grid;
+  }
+
+  /* El input real, invisible, va encima del riel: recibe el clic, el toque y el foco. */
+  #arma-tu-plan .interruptor input {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 16px;
+    translate: 0 -50%;
+    width: 56px;
+    height: 44px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  #arma-tu-plan .interruptor-riel {
+    position: relative;
+    display: block;
+    width: 56px;
+    height: 32px;
+    border-radius: 2px;
+    background: var(--neutro-500);
+    transition: background-color 160ms ease;
+  }
+
+  #arma-tu-plan .interruptor-riel::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    background: var(--color-ficha);
+    transition: transform 180ms var(--curva-salida);
+  }
+
+  #arma-tu-plan .interruptor input:checked + .interruptor-riel {
+    background: var(--marca-600);
+  }
+
+  #arma-tu-plan .interruptor input:checked + .interruptor-riel::after {
+    transform: translateX(24px);
+  }
+
+  #arma-tu-plan .interruptor input:focus-visible + .interruptor-riel {
+    outline: 3px solid var(--color-foco);
+    outline-offset: 3px;
+  }
+
+  #arma-tu-plan .total {
+    margin-top: 24px;
+  }
+
+  #arma-tu-plan .total p {
+    margin: 0;
+  }
+
+  #arma-tu-plan .total .resultado-rotulo {
+    margin-bottom: 4px;
+  }
+
+  #arma-tu-plan .total .total-monto {
+    font-size: clamp(3.25rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  #arma-tu-plan .total-unidad {
+    font-weight: 700;
+  }
+
+  #arma-tu-plan .total .total-despues {
+    margin-top: 10px;
+    font-size: 1.125rem;
+  }
+
+  #arma-tu-plan .resultado-acciones {
+    display: grid;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  #arma-tu-plan .boton-oscuro {
+    background: var(--color-ficha-texto);
+    color: var(--color-ficha);
+  }
+
+  #arma-tu-plan .boton-claro {
+    background: var(--marca-100);
+    color: var(--color-ficha-texto);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #arma-tu-plan .boton-oscuro:hover {
+      background: var(--marca-800);
+    }
+
+    #arma-tu-plan .boton-claro:hover {
+      background: var(--marca-200);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #arma-tu-plan .armador-cabeza {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      gap: 48px;
+    }
+
+    #arma-tu-plan .resultado {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    #arma-tu-plan .resultado-acciones {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    #arma-tu-plan .reiniciar {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+</style>

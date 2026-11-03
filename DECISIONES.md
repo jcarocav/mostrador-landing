@@ -361,3 +361,62 @@ Todos los textos de la landing se escribieron contra esta tabla. Si una fila cam
   movimiento reducido, todavía en curso en el runner, más lento que este PC. Es el mismo error de la
   decisión 12: medir un instante. La prueba ahora exige que ninguna animación dure más de 1 ms, lo que
   sí prueba que la página no se mueve, y además que llegue al reposo.
+
+## 20 · 2026-11-02 · Margen de rendimiento para la CI: AVIF, precarga por página y estilos sin clases de alcance
+
+- **Por qué:** el PR 8 pasó la CI con rendimiento 95, justo en el mínimo, y en este PC daba 99: el runner
+  de GitHub es más lento. Arma tu plan suma HTML y CSS, así que había que ganar margen sin bajar la vara.
+- **Capturas en AVIF a calidad 50, con WebP de respaldo** (`<picture>`): a la vista no se distingue del
+  WebP a 80 (se comparó un recorte con texto lado a lado) y pesa un 38 % menos. La imagen del LCP pasó de
+  31 a 20 KB. Los navegadores sin AVIF reciben el WebP.
+- **Tres tamaños por formato en vez de cinco:** cada tamaño alarga el `srcset` de todas las imágenes.
+- **La fuente de los títulos no se precarga si la página tiene una imagen principal:** en la portada
+  competía con el LCP. En la privacidad sí se precarga, porque allí el LCP es el título y sin precarga
+  el CLS subía de 0,002 a 0,035.
+- **Estilos sin clases de alcance:** cada componente pasó de `<style>` con alcance a `<style is:global>`,
+  con la raíz del componente delante de cada selector (`#planes h3`). Astro ya no agrega una clase
+  `astro-xxxx` a cada etiqueta: el HTML bajó de 100 a 84 KB. La conversión la hizo un script con
+  PostCSS, no un reemplazo de texto.
+- **Comprobado que la conversión no cambió el diseño:** se compararon el tamaño, la posición y los
+  estilos calculados de los 697 elementos de la portada, antes y después. La única diferencia es el
+  precio de las etiquetas, que ahora respeta el `margin-top: 2px` que tenía escrito: antes lo anulaba,
+  sin querer, la mayor especificidad que daba la clase de alcance.
+- **Descartado:** sacar el CSS a un archivo aparte (dio solo 2 puntos y empeoró la privacidad), servir
+  comprimido en la prueba (Lighthouse mide el peor caso a propósito, decisión 3) y bajar el mínimo.
+- **Resultado en este PC:** portada 98 (LCP 2,0 s) y privacidad 100. La medición varía de 94 a 98 según
+  la carga del equipo. **NO VERIFICADO** el margen en la CI hasta que corra el PR.
+
+## 21 · 2026-11-02 · Arma tu plan
+
+- **Nueve preguntas** con botones grandes (72 px de alto): rubro, locales, bodega, cajas, personas,
+  productos, equipo, internet y prioridad. Al tocar una respuesta pasa a la siguiente, el foco va al
+  título de la nueva pregunta y «Pregunta N de 9» se anuncia a los lectores de pantalla. «Atrás»
+  conserva lo elegido.
+- **Barra de avance:** `role="progressbar"` con `aria-valuenow`, dibujada con `transform: scaleX`.
+- **Recomendación (`src/config/armador.ts`):** el plan más barato que alcanza, con los límites reales
+  de la app. Cada adicional es un interruptor (se activa una vez): si Emprende necesita más de una caja,
+  un usuario o un paquete de productos extra, o más de 2 ubicaciones, que no se venden aparte, conviene
+  Pyme. Sobre los límites de Pyme, Empresa a cotizar. La caja adicional trae su usuario.
+- **Total en vivo:** precio promocional del plan más los adicionales, con lo que se paga desde el mes 4 y
+  los montos con IVA. Los adicionales no tienen promoción.
+- **Notas honestas según las respuestas:** si pide boletas o «saber cuánto gano», se le dice que aún no
+  están.
+- **Nada se guarda ni se envía:** sin `localStorage`, `sessionStorage`, IndexedDB ni cookies, y sin
+  peticiones mientras responde (lo vigila una prueba). Al recargar, las respuestas desaparecen.
+  «Prefiero que me asesoren» abre WhatsApp con las respuestas y el resultado escritos, solo si la
+  persona lo toca.
+- **Sin JavaScript** se ve un aviso con el botón de WhatsApp, en vez de botones que no hacen nada.
+- **Un solo campo blanco en la página:** Arma tu plan va en blanco, el momento en que la persona
+  responde. El botón flotante de WhatsApp tiene un borde oscuro para verse también ahí.
+- **review-animations** (leído de su SKILL.md y STANDARDS.md):
+
+  | Antes | Después | Por qué |
+  |---|---|---|
+  | Opacidad de las entradas con `ease` | `var(--curva-salida)` | Una entrada con curva débil se siente lenta |
+  | El `input` del interruptor quedaba debajo del riel | `input` encima, centrado | El clic directo caía en el riel; con el teclado funcionaba |
+  | Pregunta nueva: 180 ms de opacidad y 8 px | Se mantiene | Cambia el contenido completo; ocurre 9 veces por visita, no cientos |
+  | Barra de avance: 240 ms `scaleX` | Se mantiene | Solo `transform`, bajo 300 ms, explica el avance |
+  | Interruptor: 180 ms `translateX` | Se mantiene | Respuesta directa a la acción, interrumpible (es una transición) |
+
+  Veredicto: **aprobado**. Con movimiento reducido las transiciones duran 1 ms y la prueba exige que
+  ninguna animación dure más que eso.

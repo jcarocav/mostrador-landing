@@ -48,7 +48,7 @@ const anchoTotal = x;
   }
 </div>
 
-<style>
+<style is:global>
   .etiqueta {
     width: var(--ancho-etiqueta, 180px);
     padding: 14px 16px 12px;
@@ -61,33 +61,33 @@ const anchoTotal = x;
     margin: 0;
   }
 
-  .etiqueta-nombre {
+  .etiqueta .etiqueta-nombre {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.25;
   }
 
-  .etiqueta-precio {
+  .etiqueta .etiqueta-precio {
     margin-top: 2px;
     font-size: 1.125rem;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
 
-  .etiqueta-barras {
+  .etiqueta .etiqueta-barras {
     position: relative;
     height: 34px;
     margin-top: 10px;
     overflow: hidden;
   }
 
-  .etiqueta-barras svg {
+  .etiqueta .etiqueta-barras svg {
     width: 100%;
     height: 100%;
     fill: currentColor;
   }
 
-  .etiqueta-haz {
+  .etiqueta .etiqueta-haz {
     position: absolute;
     inset: -4px auto -4px 0;
     width: 3px;
@@ -106,7 +106,7 @@ const anchoTotal = x;
     color: var(--color-etiqueta-estado, var(--exito-700));
   }
 
-  .etiqueta-estado svg {
+  .etiqueta .etiqueta-estado svg {
     width: 16px;
     height: 16px;
     fill: none;

@@ -30,18 +30,18 @@ const enlace = enlaceWhatsApp(t.mensaje);
   </svg>
 </a>
 
-<style>
-  .contacto {
+<style is:global>
+  #contacto .contacto {
     display: grid;
     gap: 32px;
   }
 
-  .contacto-accion p {
+  #contacto .contacto-accion p {
     margin: 14px 0 0;
     color: var(--color-texto-suave);
   }
 
-  .contacto-accion p a {
+  #contacto .contacto-accion p a {
     color: var(--color-texto);
   }
 
@@ -54,6 +54,8 @@ const enlace = enlaceWhatsApp(t.mensaje);
     place-items: center;
     width: 56px;
     height: 56px;
+    /* El borde oscuro lo separa del fondo blanco de «Arma tu plan»; sobre el índigo no se nota. */
+    border: 2px solid var(--color-fondo);
     border-radius: 2px;
     background: var(--color-accion);
     color: var(--color-accion-texto);
@@ -79,7 +81,7 @@ const enlace = enlaceWhatsApp(t.mensaje);
   }
 
   @media (min-width: 1024px) {
-    .contacto {
+    #contacto .contacto {
       grid-template-columns: 1fr 1fr;
       gap: 64px;
       align-items: end;

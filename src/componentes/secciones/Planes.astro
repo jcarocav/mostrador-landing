@@ -67,14 +67,14 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
   </div>
 </section>
 
-<style>
-  .planes {
+<style is:global>
+  #planes .planes {
     display: grid;
     gap: 12px;
     margin-top: clamp(40px, 6vw, 72px);
   }
 
-  .plan {
+  #planes .plan {
     display: flex;
     flex-direction: column;
     padding: clamp(24px, 3vw, 36px);
@@ -82,12 +82,12 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
     background: var(--color-superficie);
   }
 
-  .plan.destacado {
+  #planes .plan.destacado {
     background: var(--color-ficha);
     color: var(--color-ficha-texto);
   }
 
-  h3 {
+  #planes h3 {
     margin: 0;
     font-size: clamp(1.75rem, 3vw, 2.75rem);
     font-weight: 800;
@@ -95,16 +95,16 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
     letter-spacing: -0.03em;
   }
 
-  .plan p {
+  #planes .plan p {
     margin: 0;
   }
 
-  .plan .plan-frase {
+  #planes .plan .plan-frase {
     margin-top: 4px;
     font-size: 1.125rem;
   }
 
-  .plan .plan-precio {
+  #planes .plan .plan-precio {
     margin-top: 28px;
     font-size: clamp(3rem, 5.6vw, 4.5rem);
     font-weight: 800;
@@ -112,20 +112,20 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
     letter-spacing: -0.04em;
   }
 
-  .plan-unidad {
+  #planes .plan-unidad {
     font-weight: 600;
   }
 
-  .plan .plan-despues {
+  #planes .plan .plan-despues {
     margin-top: 16px;
     font-size: 1.125rem;
   }
 
-  .plan .plan-nota {
+  #planes .plan .plan-nota {
     margin-top: 6px;
   }
 
-  .plan-limites {
+  #planes .plan-limites {
     display: grid;
     gap: 4px;
     margin: 24px 0 28px;
@@ -134,22 +134,22 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
     font-weight: 600;
   }
 
-  .plan-boton {
+  #planes .plan-boton {
     margin-top: auto;
     background: var(--color-accion);
     color: var(--color-accion-texto);
   }
 
-  .destacado .plan-boton {
+  #planes .destacado .plan-boton {
     background: var(--color-fondo);
     color: var(--color-texto);
   }
 
-  .incluyen {
+  #planes .incluyen {
     margin-top: clamp(40px, 6vw, 72px);
   }
 
-  .incluyen ul {
+  #planes .incluyen ul {
     display: grid;
     gap: 6px;
     margin: 16px 0 0;
@@ -158,7 +158,7 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
     font-size: 1.125rem;
   }
 
-  .incluyen-pronto {
+  #planes .incluyen-pronto {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -166,22 +166,22 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .plan-boton:hover {
+    #planes .plan-boton:hover {
       background: var(--color-accion-encima);
     }
 
-    .destacado .plan-boton:hover {
+    #planes .destacado .plan-boton:hover {
       background: var(--color-superficie);
     }
   }
 
   @media (min-width: 1024px) {
-    .planes {
+    #planes .planes {
       grid-template-columns: 1fr 1.2fr 1fr;
       align-items: stretch;
     }
 
-    .incluyen ul {
+    #planes .incluyen ul {
       grid-template-columns: repeat(3, 1fr);
       gap: 8px 48px;
     }

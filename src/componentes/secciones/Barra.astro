@@ -10,13 +10,14 @@ import { textos } from '../../textos/textos';
   </a>
   <nav class="nav" aria-label={textos.nav.principal}>
     <a class="nav-enlace" href="/#empieza">{textos.nav.comoFunciona}</a>
+    <a class="nav-enlace" href="/#arma-tu-plan">{textos.nav.armaTuPlan}</a>
     <a class="nav-enlace" href="/#planes">{textos.nav.planes}</a>
     <a class="nav-enlace" href="/#preguntas">{textos.nav.preguntas}</a>
     <a class="boton boton-primario boton-chico" href="/#contacto">{textos.nav.accion}</a>
   </nav>
 </header>
 
-<style>
+<style is:global>
   .barra {
     display: flex;
     align-items: center;
@@ -25,13 +26,13 @@ import { textos } from '../../textos/textos';
     padding-block: 16px;
   }
 
-  .nav {
+  .barra .nav {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .nav-enlace {
+  .barra .nav-enlace {
     display: none;
     align-items: center;
     min-height: 44px;
@@ -41,8 +42,8 @@ import { textos } from '../../textos/textos';
     text-decoration: none;
   }
 
-  @media (min-width: 720px) {
-    .nav-enlace {
+  @media (min-width: 860px) {
+    .barra .nav-enlace {
       display: inline-flex;
     }
   }
