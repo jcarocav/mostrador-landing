@@ -149,3 +149,15 @@ comprobar se marca **NO VERIFICADO**.
   aviso, no detiene la CI).
 - `sharp` (Apache-2.0) queda como dependencia de desarrollo explícita: ya venía con Astro y lo usan
   las hojas de fotogramas.
+
+## 11 · 2026-11-02 · Dirección visual elegida: B, «Mostrador de noche»
+
+- **Decisión del dueño:** la landing sigue con la dirección B (`/direcciones/b/`): índigo profundo,
+  Bricolage Grotesque en los títulos, cifras grandes y «Empieza fácil» como escena fija con GSAP
+  ScrollTrigger, más Lenis en el PC.
+- **Motivo:** elección del dueño en el punto de control de la Fase 1, comparando las dos direcciones.
+- **Alternativa descartada:** dirección A, «Comprobante claro».
+- **Pendiente para la Fase 2, en una sesión nueva abierta en la carpeta de la landing:** borrar la
+  dirección A, pasar la B a la portada y quitar el índice `/direcciones/`, como dice la decisión 10.
+  Esta decisión no cambia código: las dos direcciones siguen en la rama `fase-1`. El PR 6 sigue en
+  borrador.
