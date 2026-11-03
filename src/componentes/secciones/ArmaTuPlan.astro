@@ -7,6 +7,9 @@ import { textos } from '../../textos/textos';
 
 const t = textos.armador;
 const r = t.resultado;
+const ta = textos.adicionales;
+const disponibles = adicionales.filter((a) => !a.proximamente);
+const enCamino = adicionales.filter((a) => a.proximamente);
 const total = t.preguntas.length;
 
 // Lo que el script necesita para escribir el resultado y el mensaje. Son datos, no código: van en JSON.
@@ -14,7 +17,7 @@ const datos = {
   whatsapp: WHATSAPP,
   aCotizar: r.aCotizar,
   planes: planes.map((p) => ({ id: p.id, nombre: p.nombre })),
-  adicionales: adicionales.map((a) => ({ id: a.id, nombre: a.nombre })),
+  adicionales: disponibles.map((a) => ({ id: a.id, nombre: ta.lista[a.id].nombre })),
   preguntas: t.preguntas.map((p) => ({ id: p.id, corto: p.corto, opciones: p.opciones })),
   titulos: Object.fromEntries(planes.map((p) => [p.id, r.titulo(p.nombre)])),
   frases: { ...r.planes, empresa: r.empresa },
@@ -85,17 +88,35 @@ const datos = {
             <p class="resultado-rotulo">{r.adicionalesTitulo}</p>
             <ul class="adicionales">
               {
-                adicionales.map((a) => (
+                disponibles.map((a) => (
                   <li>
                     <label class="interruptor">
                       <span class="interruptor-texto">
-                        <strong>{a.nombre}</strong>
-                        <span>{a.detalle}</span>
-                        <span class="cifra">{formatoPesos(a.precioMensual)} + IVA al mes</span>
+                        <strong>{ta.lista[a.id].nombre}</strong>
+                        <span>{ta.lista[a.id].detalle}</span>
+                        <span class="cifra">
+                          {formatoPesos(a.precioMensual)} {ta.alMes}
+                        </span>
                       </span>
                       <input type="checkbox" role="switch" data-adicional={a.id} />
                       <span class="interruptor-riel" aria-hidden="true" />
                     </label>
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="resultado-rotulo en-camino">{r.prontoTitulo}</p>
+            <ul class="adicionales" data-en-camino>
+              {
+                enCamino.map((a) => (
+                  <li class="pronto-fila">
+                    <span class="interruptor-texto">
+                      <strong>{ta.lista[a.id].nombre}</strong>
+                      <span class="cifra">
+                        {formatoPesos(a.precioMensual)} {ta.alMes}
+                      </span>
+                    </span>
+                    <span class="pronto">{textos.proximamente}</span>
                   </li>
                 ))
               }
@@ -326,6 +347,26 @@ const datos = {
     border-radius: 2px;
     background: var(--marca-50);
     cursor: pointer;
+  }
+
+  #arma-tu-plan .en-camino {
+    margin-top: 20px;
+  }
+
+  #arma-tu-plan .pronto-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 12px 16px;
+    border-radius: 2px;
+    background: var(--marca-50);
+  }
+
+  #arma-tu-plan .pronto-fila .pronto {
+    background: var(--marca-800);
+    color: var(--color-ficha);
   }
 
   #arma-tu-plan .interruptor-texto {

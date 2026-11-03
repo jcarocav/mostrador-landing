@@ -201,6 +201,21 @@ export const textos = {
       { nombre: 'Integraciones', texto: 'Terminales de pago, tiendas en línea, despachos y contabilidad.' },
     ],
   },
+  adicionales: {
+    titulo: 'Adicionales',
+    alMes: '+ IVA al mes',
+    cadaUna: 'cada una',
+    lista: {
+      usuario: { nombre: 'Usuario adicional', detalle: 'Una persona más, con su usuario y su PIN.' },
+      caja: { nombre: 'Caja adicional con usuario', detalle: 'Una caja más, con la persona que la atiende.' },
+      ubicacion: { nombre: 'Tienda o bodega adicional', detalle: 'Un local o una bodega más, con su propio stock.' },
+      productos: { nombre: '+5.000 productos', detalle: 'Más espacio en tu catálogo.' },
+      'pos-movil': { nombre: 'POS móvil con QR', detalle: 'El vendedor arma la venta en su celular y en la caja solo se cobra.' },
+      mercadolibre: { nombre: 'Integración con Mercado Libre', detalle: 'Tu stock y tus pedidos, sincronizados.' },
+      shopify: { nombre: 'Integración con Shopify', detalle: 'Tu stock y tus pedidos, sincronizados.' },
+      woocommerce: { nombre: 'Integración con WooCommerce', detalle: 'Tu stock y tus pedidos, sincronizados.' },
+    } as Record<string, { nombre: string; detalle: string }>,
+  },
   armador: {
     titulo: 'Arma tu plan',
     bajada: 'Nueve preguntas cortas y te decimos qué plan te conviene. Todo se calcula aquí mismo: no guardamos ni enviamos nada.',
@@ -312,6 +327,7 @@ export const textos = {
     resultado: {
       titulo: (plan: string) => `Te conviene ${plan}`,
       adicionalesTitulo: 'Suma lo que necesites',
+      prontoTitulo: 'En camino',
       totalTitulo: 'Total al mes',
       totalPromocion: (meses: number) => `+ IVA, los primeros ${meses} meses`,
       totalDespues: (mes: number, monto: string) => `Desde el mes ${mes}: ${monto} + IVA`,
@@ -421,7 +437,7 @@ export const textos = {
       },
       {
         p: '¿Puedo cambiar de plan?',
-        r: 'Sí. Por ahora nos escribes y lo cambiamos nosotros. Pronto podrás hacerlo tú mismo desde la app.',
+        r: 'Sí, y también sumar adicionales, como un usuario, una caja o una tienda más. Por ahora nos escribes y lo hacemos nosotros. Pronto podrás hacerlo tú mismo desde la app.',
       },
       {
         p: '¿Puedo llevarme mis datos?',

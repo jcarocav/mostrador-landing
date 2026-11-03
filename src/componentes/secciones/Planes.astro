@@ -1,9 +1,10 @@
 ---
 import { enlaceWhatsApp } from '../../config/contacto';
-import { conIva, formatoNumero, formatoPesos, planes } from '../../config/precios';
+import { adicionales, conIva, formatoNumero, formatoPesos, planes } from '../../config/precios';
 import { textos } from '../../textos/textos';
 
 const t = textos.planes;
+const ta = textos.adicionales;
 const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planPyme, empresa: t.planEmpresa };
 ---
 
@@ -53,6 +54,23 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
         </article>
       ))
     }
+  </div>
+
+  <div class="adicionales-lista" data-aparece>
+    <h3>{ta.titulo}</h3>
+    <ul>
+      {
+        adicionales.map((a) => (
+          <li>
+            <span>{ta.lista[a.id].nombre}</span>
+            <span class="cifra">
+              {formatoPesos(a.precioMensual)} {ta.alMes}
+            </span>
+            {a.proximamente && <span class="pronto">{textos.proximamente}</span>}
+          </li>
+        ))
+      }
+    </ul>
   </div>
 
   <div class="incluyen" data-aparece>
@@ -143,6 +161,34 @@ const frases: Record<string, string> = { emprende: t.planEmprende, pyme: t.planP
   #planes .destacado .plan-boton {
     background: var(--color-fondo);
     color: var(--color-texto);
+  }
+
+  #planes .adicionales-lista {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  #planes .adicionales-lista ul {
+    display: grid;
+    gap: 4px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #planes .adicionales-lista li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+    padding: 10px 16px;
+    border-radius: 2px;
+    background: var(--color-superficie);
+    font-size: 1.0625rem;
+  }
+
+  #planes .adicionales-lista li span:first-child {
+    flex: 1 1 14rem;
+    font-weight: 600;
   }
 
   #planes .incluyen {

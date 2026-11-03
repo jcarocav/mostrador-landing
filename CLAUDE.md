@@ -73,6 +73,11 @@ Documentos: `DECISIONES.md` (decisiones numeradas) y este archivo.
 14. **Leer el resumen completo de cada prueba** (pasadas, fallidas y omitidas) antes de un commit o de
     reportar verde.
 15. **Credenciales:** este proyecto no usa ninguna. Nunca pedirlas ni mostrarlas en el chat.
+16. **Nada de copias temporales del proyecto con enlaces a `node_modules`** (junction o symlink, en un
+    `git worktree` o en otra carpeta): al borrar la copia, Windows sigue el enlace y borra las dependencias
+    reales (DECISIONES.md #25). Para comparar dos versiones, la copia instala lo suyo con `npm ci`, o se
+    compara solo `dist/`. Si ya existe un enlace, se quita primero con `cmd /c rmdir <enlace>`, que borra
+    solo el enlace, y recién después la carpeta.
 
 ## Skills de este proyecto
 

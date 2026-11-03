@@ -33,13 +33,21 @@ export const planes: Plan[] = [
 ];
 
 /**
- * Adicionales del armador de planes. PRECIOS DE EJEMPLO puestos por Claude: el dueño debe confirmarlos
- * antes de publicar (DECISIONES.md #18). Las cantidades son las de la tabla `adicionales` de la app.
+ * Adicionales, + IVA al mes, con los precios del documento del dueño (DECISIONES.md #23). `suma` dice qué
+ * límite amplía cada uno: Arma tu plan lo usa para recomendarlos. Los «próximamente» se muestran con su
+ * precio, pero no se pueden activar ni entran al total. Nombres y descripciones: src/textos/textos.ts.
  */
-export const adicionales: { id: string; nombre: string; detalle: string; precioMensual: number }[] = [
-  { id: 'usuario', nombre: 'Usuario adicional', detalle: 'Una persona más con su usuario y su PIN.', precioMensual: 2990 },
-  { id: 'caja', nombre: 'Caja con usuario adicional', detalle: 'Una caja más, con la persona que la atiende.', precioMensual: 7990 },
-  { id: 'productos', nombre: 'Paquete de 1.000 productos', detalle: 'Más espacio en tu catálogo.', precioMensual: 3990 },
+export type Adicional = { id: string; precioMensual: number; proximamente?: boolean; suma?: Partial<Limites> };
+
+export const adicionales: Adicional[] = [
+  { id: 'usuario', precioMensual: 1990, suma: { usuarios: 1 } },
+  { id: 'caja', precioMensual: 4990, suma: { cajas: 1, usuarios: 1 } },
+  { id: 'ubicacion', precioMensual: 4990, suma: { ubicaciones: 1 } },
+  { id: 'productos', precioMensual: 2990, suma: { productos: 5000 } },
+  { id: 'pos-movil', precioMensual: 2990, proximamente: true },
+  { id: 'mercadolibre', precioMensual: 7990, proximamente: true },
+  { id: 'shopify', precioMensual: 7990, proximamente: true },
+  { id: 'woocommerce', precioMensual: 7990, proximamente: true },
 ];
 
 export const conIva = (neto: number) => Math.round(neto * (1 + IVA));
