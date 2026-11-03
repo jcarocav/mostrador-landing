@@ -147,7 +147,15 @@ test.describe('movimiento', () => {
     await page.goto('/');
     await page.waitForLoadState('load');
     expect(await page.evaluate(() => document.documentElement.classList.contains('js-movimiento'))).toBe(false);
-    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+    // Las transiciones quedan en 1 ms: pueden estar corriendo en este instante, pero ninguna dura de verdad.
+    const conDuracion = await page.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => Number(a.effect?.getTiming().duration) > 1)
+        .map((a) => `${(a.effect as KeyframeEffect).target?.nodeName}: ${a.effect?.getTiming().duration} ms`),
+    );
+    expect(conDuracion).toEqual([]);
+    await enReposo(page);
     await expect(page.locator('[data-total]')).toHaveText(/\$4\.880/);
     await expect(page.locator('.pantalla[data-pantalla="carrito"]').first()).toHaveCSS('opacity', '1');
     const escondidos = await page

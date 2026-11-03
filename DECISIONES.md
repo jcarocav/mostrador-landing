@@ -355,3 +355,9 @@ Todos los textos de la landing se escribieron contra esta tabla. Si una fila cam
   página, y dejó ver otro problema: las transiciones fuera de pantalla quedan congeladas y `enReposo()`
   no terminaba. `enReposo()` ahora fuerza a renderizar todo antes de medir: axe mide la página completa.
 - Queda vigilado que los enlaces del menú lleguen a su sección aunque aún no esté renderizada.
+
+- **La CI del PR 8 cayó** en «con movimiento reducido la página queda completa y quieta»: la prueba exigía
+  cero animaciones en un instante y encontró 7. Son las transiciones de 1 ms que deja la regla de
+  movimiento reducido, todavía en curso en el runner, más lento que este PC. Es el mismo error de la
+  decisión 12: medir un instante. La prueba ahora exige que ninguna animación dure más de 1 ms, lo que
+  sí prueba que la página no se mueve, y además que llegue al reposo.
