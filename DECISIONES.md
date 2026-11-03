@@ -431,3 +431,54 @@ Todos los textos de la landing se escribieron contra esta tabla. Si una fila cam
   y el texto visible sean «Tu inventario, tus ventas, tu negocio.».
 - De paso, el nombre de las etiquetas usa `text-wrap: balance`: «Pan de molde 500 g» dejaba la «g» sola
   en una línea.
+
+## 23 · 2026-11-03 · Precios de los adicionales del documento del dueño
+
+- **Decisión del dueño,** + IVA al mes, en `src/config/precios.ts`: usuario adicional $1.990, caja adicional
+  con usuario $4.990, tienda o bodega adicional $4.990 y +5.000 productos $2.990. Además, **Próximamente**:
+  POS móvil con QR $2.990 y las integraciones con Mercado Libre, Shopify o WooCommerce, $7.990 cada una.
+  Reemplazan los precios de ejemplo de la decisión 18.
+- **Arma tu plan los recomienda con estos valores.** Emprende crece con una caja (trae su usuario), un
+  usuario, una tienda o bodega y 5.000 productos, cada uno una vez, porque son interruptores. Si hace falta
+  más, o si así cuesta lo mismo o más que Pyme después de la promoción ($34.990), recomienda Pyme. Ejemplo:
+  caja, tienda y 5.000 productos suman $32.960 desde el mes 4, todavía menos que Pyme.
+- Antes, las tiendas y bodegas no se vendían aparte: un local con dos bodegas iba directo a Pyme. Ahora le
+  conviene Emprende con una tienda o bodega adicional.
+- **Lo que es Próximamente se ve con su precio, pero no tiene interruptor ni entra al total.** Lo vigila una
+  prueba, igual que la lista de adicionales con sus precios, que también se agregó a «Planes y precios».
+- Los nombres y descripciones de los adicionales pasaron a `src/textos/textos.ts`, y en precios quedan
+  solo los montos.
+- **«Sin permanencia mínima»: confirmado por el dueño** (pendiente de la decisión 18).
+
+## 24 · 2026-11-03 · Antes de publicar (lista del dueño)
+
+El sitio no se publica hasta tener todo esto. «Prueba gratis» y WhatsApp quedan como están hasta entonces.
+
+- [ ] **Número real de WhatsApp:** uno solo para el producto, en `src/config/contacto.ts`.
+- [ ] **Prueba de 14 días sin tarjeta,** cuando exista producción: «Prueba gratis» pasa de WhatsApp al
+  registro de la app y los textos dicen la duración.
+- [ ] **Nombre y logo definitivos:** `src/marca/marca.ts` y `src/marca/logo.svg`. El favicon sale del logo.
+- [ ] **Dominio.** Comprarlo cuesta dinero: necesita la confirmación del dueño para esa compra (regla 7).
+- [ ] **Revisión de los textos** por el dueño (`src/textos/textos.ts`), con la tabla de la decisión 17
+  al día.
+
+## 25 · 2026-11-03 · Regla: nada de copias temporales con enlaces a node_modules
+
+- **Qué pasó (2026-11-02):** para comparar el diseño antes y después de un cambio se armó una copia
+  temporal del proyecto (`git worktree`) con un enlace (junction) a `node_modules`. Al borrar la copia,
+  Windows siguió el enlace y borró parte de las dependencias reales. Se reinstalaron con `npm ci`, sin
+  cambiar el `package-lock.json` y con 0 vulnerabilidades; el repositorio no se vio afectado.
+- **Decisión del dueño:** queda como regla 16 de `CLAUDE.md`.
+
+## 26 · 2026-11-03 · La CI del PR 11 cayó en rendimiento (94): Arma tu plan se dibuja desde el script
+
+- **Qué pasó:** la primera corrida de la CI del PR 11 dio 94 en la portada (mínimo 95), con FCP de 2,2 s;
+  las 78 pruebas y la accesibilidad pasaron. La protección de `main` bloqueó la fusión, como debe. La lista
+  de adicionales sumó HTML, y en la CI el margen es justo.
+- **Arreglo:** las preguntas y los adicionales de Arma tu plan los dibuja `src/scripts/armador.ts`, con el
+  mismo marcado de antes. Sin JavaScript esa parte no se muestra (se ve el aviso con WhatsApp), así que en
+  el HTML solo pesaban en la primera pintura. También salió el atributo `data-alt`, que nadie usaba. El HTML
+  bajó de 87 a 80 KB. Las 78 pruebas siguen iguales y pasan sin cambios.
+- **Medición en este PC:** varía de 94 a 98 según la carga del equipo (había un juego abierto, con la CPU
+  al 77-100 %). `main` dio 98 en las mismas condiciones. La que manda es la CI.
+- **No se bajó el mínimo de 95.**

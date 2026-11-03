@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { WHATSAPP } from '../src/config/contacto';
-import { formatoPesos, MESES_PROMOCION, planes } from '../src/config/precios';
+import { adicionales, formatoPesos, MESES_PROMOCION, planes } from '../src/config/precios';
 import { enReposo, recorrer } from './ayuda';
 
 test.describe('secciones', () => {
@@ -112,6 +112,21 @@ test.describe('navegación', () => {
       await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: nombre, exact: true }).click();
       await expect(page.locator(`#${id}`)).toBeInViewport();
       await page.evaluate(() => window.scrollTo(0, 0));
+    }
+  });
+});
+
+test.describe('adicionales', () => {
+  test('Planes y precios muestra cada adicional con su precio, y lo que no existe dice Próximamente', async ({ page }) => {
+    await page.goto('/');
+    const lista = page.locator('#planes .adicionales-lista li');
+    await expect(lista).toHaveCount(adicionales.length);
+    // Mismo orden que src/config/precios.ts (los textos no se importan aquí: traen el logo como SVG).
+    for (const [i, a] of adicionales.entries()) {
+      const fila = lista.nth(i);
+      await expect(fila).toContainText(formatoPesos(a.precioMensual));
+      if (a.proximamente) await expect(fila).toContainText('Próximamente');
+      else await expect(fila).not.toContainText('Próximamente');
     }
   });
 });

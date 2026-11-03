@@ -34,9 +34,17 @@ const limitesDe = (id: 'emprende' | 'pyme'): Limites => {
 
 export type Recomendacion = { plan: 'emprende' | 'pyme' | 'empresa'; adicionales: string[] };
 
+const precioNormal = (id: 'emprende' | 'pyme') => {
+  const plan = planes.find((p) => p.id === id);
+  return plan && !plan.aCotizar ? plan.precioNormal : Infinity;
+};
+const precioDe = (id: string) => adicionales.find((a) => a.id === id)?.precioMensual ?? 0;
+
 /**
- * El plan más barato que alcanza. Cada adicional se activa una sola vez (son interruptores): si Emprende
- * necesita más que eso, o más ubicaciones, que no se venden aparte, conviene Pyme. Sobre Pyme, Empresa.
+ * El plan más barato que alcanza. Emprende puede crecer con adicionales, cada uno una sola vez porque son
+ * interruptores: una caja (trae su usuario), un usuario, una tienda o bodega y 5.000 productos. Si necesita
+ * más que eso, o si con los adicionales cuesta lo mismo o más que Pyme después de la promoción, conviene
+ * Pyme. Sobre los límites de Pyme, Empresa a cotizar.
  */
 export function recomendar(n: Necesidades): Recomendacion {
   const pyme = limitesDe('pyme');
@@ -47,12 +55,16 @@ export function recomendar(n: Necesidades): Recomendacion {
   const emprende = limitesDe('emprende');
   const cajasDeMas = Math.max(0, n.cajas - emprende.cajas);
   const usuariosDeMas = Math.max(0, n.usuarios - emprende.usuarios - cajasDeMas); // cada caja adicional trae su usuario
-  const paquetes = Math.ceil(Math.max(0, n.productos - emprende.productos) / 1000);
-  if (n.ubicaciones > emprende.ubicaciones || cajasDeMas > 1 || usuariosDeMas > 1 || paquetes > 1) {
+  const ubicacionesDeMas = Math.max(0, n.ubicaciones - emprende.ubicaciones);
+  const paquetes = Math.ceil(Math.max(0, n.productos - emprende.productos) / 5000);
+  const elegidos = [cajasDeMas && 'caja', usuariosDeMas && 'usuario', ubicacionesDeMas && 'ubicacion', paquetes && 'productos'].filter(
+    Boolean,
+  ) as string[];
+  const costoEmprende = precioNormal('emprende') + elegidos.reduce((suma, id) => suma + precioDe(id), 0);
+
+  if (Math.max(cajasDeMas, usuariosDeMas, ubicacionesDeMas, paquetes) > 1 || costoEmprende >= precioNormal('pyme')) {
     return { plan: 'pyme', adicionales: [] };
   }
-
-  const elegidos = [cajasDeMas && 'caja', usuariosDeMas && 'usuario', paquetes && 'productos'].filter(Boolean) as string[];
   return { plan: 'emprende', adicionales: elegidos };
 }
 
@@ -62,7 +74,7 @@ export type Totales = { promocional: number; normal: number; promocionalConIva: 
 export function totales(planId: string, elegidos: string[]): Totales | null {
   const plan = planes.find((p) => p.id === planId);
   if (!plan || plan.aCotizar) return null;
-  const extra = adicionales.filter((a) => elegidos.includes(a.id)).reduce((suma, a) => suma + a.precioMensual, 0);
+  const extra = adicionales.filter((a) => !a.proximamente && elegidos.includes(a.id)).reduce((suma, a) => suma + a.precioMensual, 0);
   const promocional = plan.precioPromocional + extra;
   const normal = plan.precioNormal + extra;
   return { promocional, normal, promocionalConIva: conIva(promocional), normalConIva: conIva(normal), meses: MESES_PROMOCION };

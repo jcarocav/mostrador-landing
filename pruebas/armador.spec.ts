@@ -27,8 +27,16 @@ test.describe('recomendación', () => {
     // La caja adicional trae su usuario: con 4 personas y 2 cajas no hace falta sumar otro.
     expect(plan({ locales: 'uno', bodega: 'no', cajas: 'dos', personas: 'cuatro', productos: 'hasta2000' })).toEqual({ plan: 'emprende', adicionales: ['caja', 'productos'] });
     expect(plan({ locales: 'uno', bodega: 'no', cajas: 'una', personas: 'cuatro', productos: 'hasta1000' })).toEqual({ plan: 'emprende', adicionales: ['usuario'] });
-    // Las ubicaciones no se venden aparte: un local con dos bodegas ya es Pyme.
-    expect(plan({ locales: 'uno', bodega: 'varias', cajas: 'una', personas: 'solo', productos: 'hasta1000' })).toEqual({ plan: 'pyme', adicionales: [] });
+    // Una tienda o bodega más se compra aparte; dos más ya no caben en los interruptores.
+    expect(plan({ locales: 'uno', bodega: 'varias', cajas: 'una', personas: 'solo', productos: 'hasta1000' })).toEqual({ plan: 'emprende', adicionales: ['ubicacion'] });
+    expect(plan({ locales: 'pocos', bodega: 'una', cajas: 'una', personas: 'solo', productos: 'hasta1000' })).toEqual({ plan: 'pyme', adicionales: [] });
+    // Caja, tienda y 5.000 productos: $32.960 después de la promoción, menos que Pyme ($34.990).
+    expect(plan({ locales: 'uno', bodega: 'varias', cajas: 'dos', personas: 'cuatro', productos: 'hasta2000' })).toEqual({
+      plan: 'emprende',
+      adicionales: ['caja', 'ubicacion', 'productos'],
+    });
+    // Hasta 10.000 productos son dos paquetes de 5.000: conviene Pyme.
+    expect(plan({ locales: 'uno', bodega: 'no', cajas: 'una', personas: 'solo', productos: 'hasta10000' })).toEqual({ plan: 'pyme', adicionales: [] });
     expect(plan({ locales: 'muchos', bodega: 'no', cajas: 'una', personas: 'solo', productos: 'hasta1000' })).toEqual({ plan: 'empresa', adicionales: [] });
     expect(plan({ locales: 'uno', bodega: 'no', cajas: 'una', personas: 'solo', productos: 'mas' })).toEqual({ plan: 'empresa', adicionales: [] });
     expect(plan({ locales: 'varios', bodega: 'varias', cajas: 'hasta5', personas: 'hasta15', productos: 'hasta10000' })).toEqual({ plan: 'pyme', adicionales: [] });
@@ -36,7 +44,10 @@ test.describe('recomendación', () => {
 
   test('la promoción rebaja el plan y los adicionales cuestan lo mismo después', () => {
     expect(totales('emprende', [])).toMatchObject({ promocional: 14990, normal: 19990 });
-    expect(totales('emprende', ['usuario'])).toMatchObject({ promocional: 17980, normal: 22980, promocionalConIva: conIva(17980), meses: 3 });
+    expect(totales('emprende', ['usuario'])).toMatchObject({ promocional: 16980, normal: 21980, promocionalConIva: conIva(16980), meses: 3 });
+    expect(totales('emprende', ['caja', 'ubicacion', 'productos'])).toMatchObject({ promocional: 14990 + 4990 + 4990 + 2990, normal: 19990 + 4990 + 4990 + 2990 });
+    // Lo que aún no existe no se cobra.
+    expect(totales('emprende', ['pos-movil', 'mercadolibre'])).toMatchObject({ promocional: 14990, normal: 19990 });
     expect(totales('pyme', [])).toMatchObject({ promocional: 29990, normal: 34990 });
     expect(totales('empresa', [])).toBeNull();
   });
@@ -88,13 +99,21 @@ test.describe('flujo', () => {
     const productos = page.locator('[data-adicional="productos"]');
     await expect(caja).toBeChecked();
     await expect(productos).toBeChecked();
-    await expect(page.locator('[data-total-monto]')).toHaveText(formatoPesos(14990 + 7990 + 3990));
+    await expect(page.locator('[data-total-monto]')).toHaveText(formatoPesos(14990 + 4990 + 2990));
 
     await caja.focus();
     await page.keyboard.press('Space');
     await expect(caja).not.toBeChecked();
-    await expect(page.locator('[data-total-monto]')).toHaveText(formatoPesos(14990 + 3990));
-    await expect(page.locator('[data-total-despues]')).toContainText(formatoPesos(19990 + 3990));
+    await expect(page.locator('[data-total-monto]')).toHaveText(formatoPesos(14990 + 2990));
+    await expect(page.locator('[data-total-despues]')).toContainText(formatoPesos(19990 + 2990));
+
+    // Lo que viene se ve con su precio, pero sin interruptor.
+    await expect(page.getByRole('switch')).toHaveCount(4);
+    const enCamino = page.locator('[data-en-camino] li');
+    await expect(enCamino).toHaveCount(4);
+    for (const nombre of ['POS móvil con QR', 'Mercado Libre', 'Shopify', 'WooCommerce']) {
+      await expect(enCamino.filter({ hasText: nombre })).toContainText('Próximamente');
+    }
 
     // Pidió boletas: se le dice la verdad.
     await expect(page.locator('[data-resultado-notas]')).toContainText('aún no están');

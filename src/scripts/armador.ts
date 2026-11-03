@@ -6,9 +6,12 @@ import { formatoPesos } from '../config/precios';
 type Datos = {
   whatsapp: string;
   aCotizar: string;
+  alMes: string;
+  proximamente: string;
   planes: { id: string; nombre: string }[];
-  adicionales: { id: string; nombre: string }[];
-  preguntas: { id: string; corto: string; opciones: { id: string; texto: string }[] }[];
+  adicionales: { id: string; nombre: string; detalle: string; precio: number }[];
+  enCamino: { id: string; nombre: string; precio: number }[];
+  preguntas: { id: string; texto: string; corto: string; opciones: { id: string; texto: string }[] }[];
   titulos: Record<string, string>;
   frases: Record<string, string>;
   notas: Record<string, string>;
@@ -20,7 +23,58 @@ const crudo = document.querySelector('[data-armador-datos]')?.textContent;
 
 if (raiz && crudo) iniciar(raiz, JSON.parse(crudo) as Datos);
 
+/** Un elemento con sus atributos y su contenido (texto o elementos). */
+function el(etiqueta: string, atributos: Record<string, string> = {}, ...hijos: (Node | string)[]) {
+  const e = document.createElement(etiqueta);
+  for (const [k, v] of Object.entries(atributos)) e.setAttribute(k, v);
+  e.append(...hijos);
+  return e;
+}
+
+/** Dibuja las preguntas y los adicionales con el mismo marcado que tendrían en el HTML. */
+function dibujar(raiz: HTMLElement, d: Datos) {
+  raiz.querySelector('[data-preguntas]')!.append(
+    ...d.preguntas.map((p, i) => {
+      const grupo = el(
+        'div',
+        { class: 'pregunta', role: 'group', 'aria-labelledby': `pregunta-${p.id}`, 'data-pregunta': p.id },
+        el('h3', { id: `pregunta-${p.id}`, tabindex: '-1' }, p.texto),
+        el('div', { class: 'opciones' }, ...p.opciones.map((o) => el('button', { class: 'opcion', type: 'button', 'data-opcion': o.id, 'aria-pressed': 'false' }, o.texto))),
+      );
+      grupo.hidden = i !== 0;
+      return grupo;
+    }),
+  );
+  const precio = (monto: number) => el('span', { class: 'cifra' }, `${formatoPesos(monto)} ${d.alMes}`);
+  raiz.querySelector('[data-lista-adicionales]')!.append(
+    ...d.adicionales.map((a) =>
+      el(
+        'li',
+        {},
+        el(
+          'label',
+          { class: 'interruptor' },
+          el('span', { class: 'interruptor-texto' }, el('strong', {}, a.nombre), el('span', {}, a.detalle), precio(a.precio)),
+          el('input', { type: 'checkbox', role: 'switch', 'data-adicional': a.id }),
+          el('span', { class: 'interruptor-riel', 'aria-hidden': 'true' }),
+        ),
+      ),
+    ),
+  );
+  raiz.querySelector('[data-en-camino]')!.append(
+    ...d.enCamino.map((a) =>
+      el(
+        'li',
+        { class: 'pronto-fila' },
+        el('span', { class: 'interruptor-texto' }, el('strong', {}, a.nombre), precio(a.precio)),
+        el('span', { class: 'pronto' }, d.proximamente),
+      ),
+    ),
+  );
+}
+
 function iniciar(raiz: HTMLElement, d: Datos) {
+  dibujar(raiz, d);
   const uno = <T extends HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
   const preguntas = [...raiz.querySelectorAll<HTMLElement>('[data-pregunta]')];
   const interruptores = [...raiz.querySelectorAll<HTMLInputElement>('[data-adicional]')];
