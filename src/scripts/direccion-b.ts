@@ -66,15 +66,18 @@ function empieza(seccion: HTMLElement) {
   const nombres = [...seccion.querySelectorAll<HTMLElement>('[data-indicador]')];
   let actual = -1;
   let capa = 1;
+  let linea: gsap.core.Timeline | undefined;
 
   const mostrar = (i: number) => {
     if (i === actual) return;
-    const anterior = actual;
     actual = i;
-    const tl = gsap.timeline({ defaults: { ease: SALIDA } });
-    if (anterior >= 0) {
-      tl.to(pasos[anterior], { opacity: 0, y: -16, duration: 0.18, ease: 'power2.out' }, 0);
-    }
+    // Un desplazamiento rápido cambia de paso antes de que termine el anterior. Si esa entrada siguiera
+    // corriendo, terminaría después de la salida y dejaría dos pasos visibles (DECISIONES.md #12).
+    linea?.kill();
+    const tl = (linea = gsap.timeline({ defaults: { ease: SALIDA } }));
+    pasos.forEach((p, j) => {
+      if (j !== i) tl.to(p, { opacity: 0, y: -16, duration: 0.18, ease: 'power2.out' }, 0);
+    });
     tl.fromTo(pasos[i], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.42 }, 0.06);
     tl.fromTo(
       pasos[i].querySelectorAll('[data-extra]'),

@@ -161,3 +161,46 @@ comprobar se marca **NO VERIFICADO**.
   dirección A, pasar la B a la portada y quitar el índice `/direcciones/`, como dice la decisión 10.
   Esta decisión no cambia código: las dos direcciones siguen en la rama `fase-1`. El PR 6 sigue en
   borrador.
+
+## 12 · 2026-11-02 · Falla de contraste en la CI del PR 6: dos causas, las dos arregladas
+
+- **Síntoma:** la CI falló en `2a583ce` con `color-contrast` en `li[data-paso="2"] h3` de
+  `/direcciones/b/` (celular, con movimiento) y había pasado en `9174385`. Entre esos commits solo
+  cambió `DECISIONES.md`, así que el código era el mismo.
+- **Reproducción:** en este PC, 60 repeticiones de la prueba pasaron. Con la misma secuencia y la CPU
+  frenada por Chrome (`Emulation.setCPUThrottlingRate`), midiendo opacidades antes, después y 1,5 s
+  después de axe, 30 corridas por velocidad:
+
+  | CPU | axe de inmediato con falla | axe en reposo con falla | Opacidades en reposo |
+  |---|---|---|---|
+  | normal | 1 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+  | 4 veces más lenta | 30 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+  | 8 veces más lenta | 0 de 30 | 0 de 30 | `1, 1, 0` en 30 de 30 |
+
+- **Causa 1, la que se sospechaba (confirmada): axe mide durante el desvanecimiento.** La prueba volvía
+  arriba y lanzaba axe de inmediato, y el paso 3 seguía apagándose. axe calcula el contraste con la
+  opacidad del momento: midió el h3 casi transparente (1,01 a 1,09 contra un mínimo de 3:1). Si axe
+  llegaba al título con el paso aún visible, pero ya casi apagado, fallaba; si llegaba antes o después,
+  no. Por eso pasaba o fallaba según la velocidad de la máquina. A velocidad normal falla poco, y a 8x
+  no falla porque axe tarda tanto que llega al título con el paso ya apagado.
+- **Causa 2, que nadie sospechaba y es un defecto real de la página: dos pasos quedaban visibles.**
+  Al desplazarse rápido, `mostrar()` apagaba el paso anterior en 0,18 s, pero la entrada de ese mismo
+  paso, de 0,42 s, seguía corriendo y lo volvía a dejar en opacidad 1. El texto de dos pasos quedaba
+  encimado hasta que el paso cambiaba otra vez. Pasaba en todas las corridas y en celular y en PC. axe
+  no lo marcaba porque ambos textos tienen buen contraste por separado.
+- **Arreglo de la página:** `mostrar()` cancela la línea de tiempo anterior antes de empezar la nueva y
+  apaga todos los pasos que no son el actual, no solo el anterior.
+- **Arreglo de la prueba:** axe mide con la página en reposo. `enReposo()` espera a que ningún elemento
+  cambie de opacidad, posición, recorte ni texto durante 300 ms y a que no quede ninguna animación
+  activa. Si la página nunca se aquieta, la prueba falla por tiempo: no se mide «como esté».
+- **La prueba quedó más exigente, no menos:**
+  - agrega «tras un desplazamiento rápido queda un solo paso visible», que falló en celular y PC antes
+    del arreglo (recibió 2, esperaba 1);
+  - agrega axe en reposo en cada uno de los tres pasos: antes, con movimiento, axe solo veía el primero
+    porque los otros estaban en opacidad 0.
+- **Comprobado después del arreglo:** en reposo `1, 0, 0` en 60 de 60 corridas; la prueba real, con
+  `enReposo()`, 40 de 40 a velocidad normal, 40 de 40 a 4x y 40 de 40 a 8x; suite completa 28 de 28. Sin
+  la espera, axe sigue fallando (33 de 60), o sea que la causa 1 existe por sí sola.
+- **Alternativas descartadas:** subir `retries` (escondería la falla), una espera fija de 1,5 s (se
+  rompe en una máquina lenta o con una animación más larga) y excluir la escena de axe (debilita la
+  prueba).
