@@ -469,3 +469,16 @@ El sitio no se publica hasta tener todo esto. «Prueba gratis» y WhatsApp queda
   Windows siguió el enlace y borró parte de las dependencias reales. Se reinstalaron con `npm ci`, sin
   cambiar el `package-lock.json` y con 0 vulnerabilidades; el repositorio no se vio afectado.
 - **Decisión del dueño:** queda como regla 16 de `CLAUDE.md`.
+
+## 26 · 2026-11-03 · La CI del PR 11 cayó en rendimiento (94): Arma tu plan se dibuja desde el script
+
+- **Qué pasó:** la primera corrida de la CI del PR 11 dio 94 en la portada (mínimo 95), con FCP de 2,2 s;
+  las 78 pruebas y la accesibilidad pasaron. La protección de `main` bloqueó la fusión, como debe. La lista
+  de adicionales sumó HTML, y en la CI el margen es justo.
+- **Arreglo:** las preguntas y los adicionales de Arma tu plan los dibuja `src/scripts/armador.ts`, con el
+  mismo marcado de antes. Sin JavaScript esa parte no se muestra (se ve el aviso con WhatsApp), así que en
+  el HTML solo pesaban en la primera pintura. También salió el atributo `data-alt`, que nadie usaba. El HTML
+  bajó de 87 a 80 KB. Las 78 pruebas siguen iguales y pasan sin cambios.
+- **Medición en este PC:** varía de 94 a 98 según la carga del equipo (había un juego abierto, con la CPU
+  al 77-100 %). `main` dio 98 en las mismas condiciones. La que manda es la CI.
+- **No se bajó el mínimo de 95.**

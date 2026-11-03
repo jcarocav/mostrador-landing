@@ -1,8 +1,10 @@
 ---
 // «Arma tu plan»: nueve preguntas y el plan recomendado. Todo se calcula en el navegador
 // (src/scripts/armador.ts) y nada se guarda ni se envía; solo WhatsApp abre un enlace, si la persona quiere.
+// Las preguntas y los adicionales los dibuja el script: sin JavaScript esta parte no se muestra (se ve el
+// aviso con WhatsApp), así que en el HTML solo serían peso para la primera pintura (DECISIONES.md #26).
 import { enlaceWhatsApp, WHATSAPP } from '../../config/contacto';
-import { adicionales, formatoPesos, MESES_PROMOCION, planes } from '../../config/precios';
+import { adicionales, MESES_PROMOCION, planes } from '../../config/precios';
 import { textos } from '../../textos/textos';
 
 const t = textos.armador;
@@ -17,8 +19,11 @@ const datos = {
   whatsapp: WHATSAPP,
   aCotizar: r.aCotizar,
   planes: planes.map((p) => ({ id: p.id, nombre: p.nombre })),
-  adicionales: disponibles.map((a) => ({ id: a.id, nombre: ta.lista[a.id].nombre })),
-  preguntas: t.preguntas.map((p) => ({ id: p.id, corto: p.corto, opciones: p.opciones })),
+  alMes: ta.alMes,
+  proximamente: textos.proximamente,
+  adicionales: disponibles.map((a) => ({ id: a.id, precio: a.precioMensual, ...ta.lista[a.id] })),
+  enCamino: enCamino.map((a) => ({ id: a.id, precio: a.precioMensual, nombre: ta.lista[a.id].nombre })),
+  preguntas: t.preguntas.map((p) => ({ id: p.id, texto: p.texto, corto: p.corto, opciones: p.opciones })),
   titulos: Object.fromEntries(planes.map((p) => [p.id, r.titulo(p.nombre)])),
   frases: { ...r.planes, empresa: r.empresa },
   notas: r.notas,
@@ -57,24 +62,7 @@ const datos = {
         <span class="avance-barra" data-avance-barra></span>
       </div>
 
-      <div class="preguntas">
-        {
-          t.preguntas.map((p, i) => (
-            <div class="pregunta" role="group" aria-labelledby={`pregunta-${p.id}`} data-pregunta={p.id} hidden={i !== 0}>
-              <h3 id={`pregunta-${p.id}`} tabindex="-1">
-                {p.texto}
-              </h3>
-              <div class="opciones">
-                {p.opciones.map((o) => (
-                  <button class="opcion" type="button" data-opcion={o.id} aria-pressed="false">
-                    {o.texto}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))
-        }
-      </div>
+      <div class="preguntas" data-preguntas></div>
 
       <div class="resultado" data-resultado hidden>
         <div class="resultado-plan">
@@ -86,41 +74,9 @@ const datos = {
         <div class="resultado-cuenta">
           <div data-bloque-adicionales>
             <p class="resultado-rotulo">{r.adicionalesTitulo}</p>
-            <ul class="adicionales">
-              {
-                disponibles.map((a) => (
-                  <li>
-                    <label class="interruptor">
-                      <span class="interruptor-texto">
-                        <strong>{ta.lista[a.id].nombre}</strong>
-                        <span>{ta.lista[a.id].detalle}</span>
-                        <span class="cifra">
-                          {formatoPesos(a.precioMensual)} {ta.alMes}
-                        </span>
-                      </span>
-                      <input type="checkbox" role="switch" data-adicional={a.id} />
-                      <span class="interruptor-riel" aria-hidden="true" />
-                    </label>
-                  </li>
-                ))
-              }
-            </ul>
+            <ul class="adicionales" data-lista-adicionales></ul>
             <p class="resultado-rotulo en-camino">{r.prontoTitulo}</p>
-            <ul class="adicionales" data-en-camino>
-              {
-                enCamino.map((a) => (
-                  <li class="pronto-fila">
-                    <span class="interruptor-texto">
-                      <strong>{ta.lista[a.id].nombre}</strong>
-                      <span class="cifra">
-                        {formatoPesos(a.precioMensual)} {ta.alMes}
-                      </span>
-                    </span>
-                    <span class="pronto">{textos.proximamente}</span>
-                  </li>
-                ))
-              }
-            </ul>
+            <ul class="adicionales" data-en-camino></ul>
           </div>
 
           <div class="total" aria-live="polite" data-total-plan>
