@@ -420,3 +420,14 @@ Todos los textos de la landing se escribieron contra esta tabla. Si una fila cam
 
   Veredicto: **aprobado**. Con movimiento reducido las transiciones duran 1 ms y la prueba exige que
   ninguna animación dure más que eso.
+
+## 22 · 2026-11-02 · Espacio perdido en el título de la portada
+
+- Al revisar las capturas del informe final se vio «Tu inventario,tus ventas» en el PC. Astro no deja
+  espacio entre una expresión y la etiqueta `<br>` que la sigue. En el celular ese `<br>` hace el salto
+  y no se notaba; en el PC, donde ese salto está oculto, las palabras quedaban pegadas, también para un
+  lector de pantalla.
+- Arreglo: cada línea del título termina con su espacio. Una prueba nueva exige que el nombre accesible
+  y el texto visible sean «Tu inventario, tus ventas, tu negocio.».
+- De paso, el nombre de las etiquetas usa `text-wrap: balance`: «Pan de molde 500 g» dejaba la «g» sola
+  en una línea.

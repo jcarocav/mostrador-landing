@@ -4,6 +4,12 @@ import { formatoPesos, MESES_PROMOCION, planes } from '../src/config/precios';
 import { enReposo, recorrer } from './ayuda';
 
 test.describe('secciones', () => {
+  test('el título de la portada se lee con sus espacios, también donde no hay salto de línea', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Tu inventario, tus ventas, tu negocio.');
+    expect((await page.getByRole('heading', { level: 1 }).innerText()).replace(/\s+/g, ' ')).toBe('Tu inventario, tus ventas, tu negocio.');
+  });
+
   test('el orden de las secciones es el que pidió el dueño', async ({ page }) => {
     await page.goto('/');
     const titulos = await page.locator('main h1, main h2').allTextContents();
