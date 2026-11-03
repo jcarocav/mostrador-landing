@@ -3,6 +3,7 @@
 // (opacidad 0) para que un script las cambie. Sin JavaScript se ve la activa.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
+import { ANCHOS_CELULAR, CALIDAD_CAPTURA } from '../config/imagenes';
 
 interface Pantalla {
   id: string;
@@ -14,21 +15,21 @@ interface Props {
   pantallas: Pantalla[];
   activa?: number;
   prioridad?: boolean;
+  /** La pantalla que se ve primero, si no es la activa (la portada parte vacía y se llena). */
+  primera?: number;
   class?: string;
   decorativo?: boolean;
   tamanos?: string;
-  /** Carga todas las pantallas de inmediato (las que una animación muestra al abrir la página). */
-  cargarTodas?: boolean;
 }
 
 const {
   pantallas,
   activa = 0,
   prioridad = false,
+  primera = activa,
   class: clase,
   decorativo = false,
   tamanos = '(min-width: 1024px) 320px, 60vw',
-  cargarTodas = false,
 } = Astro.props;
 ---
 
@@ -42,11 +43,13 @@ const {
           data-pantalla={p.id}
           data-alt={p.alt}
           class:list={['pantalla', { activa: i === activa }]}
-          widths={[p.src.width]}
+          widths={ANCHOS_CELULAR}
           sizes={tamanos}
-          loading={cargarTodas || (prioridad && i === activa) ? 'eager' : 'lazy'}
-          fetchpriority={prioridad && i === activa ? 'high' : undefined}
-          decoding="async"
+          format="webp"
+          quality={CALIDAD_CAPTURA}
+          loading={prioridad && i === primera ? 'eager' : 'lazy'}
+          fetchpriority={prioridad && i === primera ? 'high' : undefined}
+          decoding={prioridad && i === primera ? 'sync' : 'async'}
         />
       ))
     }

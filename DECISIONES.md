@@ -225,3 +225,50 @@ comprobar se marca **NO VERIFICADO**.
     normal al lado. Una franja de lectura con `IntersectionObserver` marcaba el paso activo con una
     barra índigo vertical. No usaba GSAP ni Lenis: era solo CSS y un observador.
   - **Rendimiento:** 100 en Lighthouse celular (LCP 1,7 s) contra 94 de la B.
+
+## 14 · 2026-11-02 · Capturas a 3x con un negocio de ejemplo inventado
+
+- **Negocio de ejemplo:** «Almacén Peumo Azul», con Rosa como dueña y Camila como cajera (solo nombres
+  de pila), dos ubicaciones («Local Centro» y «Bodega») y doce productos genéricos sin marcas. El nombre
+  se buscó en la web el 2026-11-02 y no apareció ningún negocio con él. **NO VERIFICADO** contra el
+  registro del SII: un almacén chico puede no estar en internet.
+- **Cómo se sacaron:** con el stack local de pruebas de `mostrador-dev` (Postgres embebido y PostgREST,
+  sin Supabase), sin pedirle al dueño que iniciara sesión. Un archivo temporal en `e2e/capturas/` armó
+  el negocio y se borró al terminar: `git status` de `mostrador-dev` quedó limpio y de ese proyecto solo
+  se copiaron las imágenes, re-codificadas sin metadatos.
+- **Tamaños:** celular 1170 × 2532 (3x de 390 × 844) y PC 2880 × 1800 (2x de 1440 × 900; a 3x pesan
+  mucho sin aportar nada a ese ancho).
+- **Son pantallas reales de la app.** Solo se cambiaron datos en la base local: el nombre del negocio,
+  el código `PEUMO` y la fecha del último respaldo, para que el aviso de respaldo no tape la pantalla.
+- La venta de la portada (`src/config/demo.ts`) es la misma de las capturas: arroz $1.590 + aceite
+  $3.290 = $4.880, recibido $10.000, vuelto $5.120. Antes el total de la animación ($14.986) no coincidía
+  con el cobro de la captura ($22.180).
+
+## 15 · 2026-11-02 · LCP: de 2,8 s a 1,7 s y Lighthouse celular de 94 a 100
+
+- **LCP real, medido:** la imagen del celular de la portada, como pensaba el dueño.
+- **Causas y arreglos:**
+  - la prioridad alta estaba en la pantalla del carrito, oculta al cargar, y no en la vacía, que es la
+    que se ve: Telefono recibe `primera`, y esa imagen se precarga en el `<head>` con su mismo `srcset`;
+  - GSAP, ScrollTrigger y Lenis (131 KB) se pedían antes de pintar: ahora se cargan después de `load`, en
+    un momento libre del navegador;
+  - se pedían imágenes que aún no se veían: con movimiento quedan en `display: none` hasta que hacen
+    falta, y el navegador no baja un `lazy` oculto;
+  - las capturas se sirven en WebP en cinco tamaños (260 a 1170 px): un celular común baja unos 30 KB.
+- **El respaldo de 4 segundos sigue activo** hasta que llega el script: si llega tarde, la página ya
+  quedó completa y el script no hace nada.
+- Las fuentes se declaran a mano solo con el subconjunto latino (trae acentos y ñ), en vez de las hojas
+  de `@fontsource` con todos sus subconjuntos.
+- **Mínimo de Lighthouse:** el rendimiento sube de 90 a 95, como pidió el dueño, en `scripts/lighthouse.mjs`,
+  la CI y `CLAUDE.md`.
+
+## 16 · 2026-11-02 · Fuentes y escena fija en el celular
+
+- **Bricolage Grotesque** solo en títulos y cifras grandes. El nombre de la marca en la barra pasa a la
+  fuente de la app (Plus Jakarta Sans), igual que el texto corrido y los botones.
+- **Escena de «Empieza fácil» en el celular:** cada paso se recorre con 0,3 pantallas de desplazamiento
+  (0,9 en total, antes 2,55), o sea un deslizamiento corto del dedo. En el PC sigue en 0,85 por paso.
+  Queda vigilado por la prueba «el paso a paso se recorre con un desplazamiento corto en el celular».
+  **NO VERIFICADO** en un celular físico: el dueño debe probar si se siente natural.
+- Los colores de la dirección B pasaron de `.dir-b` a las variables del tema en `global.css`, porque
+  ahora es el único tema del sitio.

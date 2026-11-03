@@ -13,7 +13,7 @@ const PAGINAS = ['/'];
 const CORRIDAS = 3;
 // error = detiene la CI; aviso = solo se informa.
 const MINIMOS = {
-  performance: { minimo: 0.9, nivel: 'error' },
+  performance: { minimo: 0.95, nivel: 'error' },
   accessibility: { minimo: 0.95, nivel: 'error' },
   'best-practices': { minimo: 0.9, nivel: 'aviso' },
   seo: { minimo: 0.9, nivel: 'aviso' },

@@ -1,4 +1,6 @@
 ---
+import bricolage from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import jakarta from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
 import { marca, variablesCss } from '../marca/marca';
 import { textos } from '../textos/textos';
 import '../estilos/global.css';
@@ -8,8 +10,8 @@ interface Props {
   descripcion?: string;
   /** false en páginas de trabajo que no deben salir en buscadores. */
   indexar?: boolean;
-  /** Fuentes que conviene precargar porque las usa el título de la portada. */
-  precargar?: string[];
+  /** La imagen más grande de la primera pantalla: se pide antes que todo lo demás (es el LCP). */
+  imagenPrincipal?: { srcset: string; sizes: string };
   colorTema?: string;
 }
 
@@ -17,9 +19,14 @@ const {
   titulo = `${marca.nombre} · ${marca.lema}`,
   descripcion = marca.descripcion,
   indexar = true,
-  precargar = [],
-  colorTema = marca.colores.marca[600],
+  imagenPrincipal,
+  colorTema = marca.colores.marca[950],
 } = Astro.props;
+
+// Solo el subconjunto latino, que trae los acentos y la ñ. Autoalojadas: ninguna petición a terceros.
+const fuentes = `
+@font-face{font-family:'Plus Jakarta Sans Variable';font-style:normal;font-display:swap;font-weight:200 800;src:url(${jakarta}) format('woff2-variations')}
+@font-face{font-family:'Bricolage Grotesque Variable';font-style:normal;font-display:swap;font-weight:200 800;src:url(${bricolage}) format('woff2-variations')}`;
 ---
 
 <!doctype html>
@@ -32,7 +39,13 @@ const {
     {!indexar && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content={colorTema} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {precargar.map((url) => <link rel="preload" href={url} as="font" type="font/woff2" crossorigin />)}
+    {
+      imagenPrincipal && (
+        <link rel="preload" as="image" type="image/webp" imagesrcset={imagenPrincipal.srcset} imagesizes={imagenPrincipal.sizes} fetchpriority="high" />
+      )
+    }
+    <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fuentes} />
     <style is:inline set:html={variablesCss} />
     <!--
       Con movimiento permitido y JavaScript, la página arranca en el estado inicial de las animaciones
