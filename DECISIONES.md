@@ -181,8 +181,9 @@ comprobar se marca **NO VERIFICADO**.
   arriba y lanzaba axe de inmediato, y el paso 3 seguía apagándose. axe calcula el contraste con la
   opacidad del momento: midió el h3 casi transparente (1,01 a 1,09 contra un mínimo de 3:1). Si axe
   llegaba al título con el paso aún visible, pero ya casi apagado, fallaba; si llegaba antes o después,
-  no. Por eso pasaba o fallaba según la velocidad de la máquina. A velocidad normal falla poco, y a 8x
-  no falla porque axe tarda tanto que llega al título con el paso ya apagado.
+  no. Por eso pasaba o fallaba según la velocidad de la máquina. A velocidad normal falla poco. Que a
+  8x no falle sería porque axe tarda tanto que llega al título con el paso ya apagado: **NO VERIFICADO**,
+  es la lectura de esos datos, sin medir el instante exacto.
 - **Causa 2, que nadie sospechaba y es un defecto real de la página: dos pasos quedaban visibles.**
   Al desplazarse rápido, `mostrar()` apagaba el paso anterior en 0,18 s, pero la entrada de ese mismo
   paso, de 0,42 s, seguía corriendo y lo volvía a dejar en opacidad 1. El texto de dos pasos quedaba
@@ -204,3 +205,23 @@ comprobar se marca **NO VERIFICADO**.
 - **Alternativas descartadas:** subir `retries` (escondería la falla), una espera fija de 1,5 s (se
   rompe en una máquina lenta o con una animación más larga) y excluir la escena de axe (debilita la
   prueba).
+
+## 13 · 2026-11-02 · Cierre de la Fase 1: la B pasa a la portada y sale la A
+
+- **Decisión del dueño:** el PR 6 lleva a `main` solo la dirección B y lo compartido. Se borran
+  `/direcciones/a/`, el índice `/direcciones/` y sus textos. La B pasa a `/` sin `noindex`, y la página
+  provisoria de la Fase 0 desaparece. `src/scripts/direccion-b.ts` pasa a llamarse `escenas.ts`.
+- **Cómo era la dirección A, «Comprobante claro», por si se quiere recuperar** (el código completo
+  queda en el commit `9174385`, archivo `src/pages/direcciones/a.astro`):
+  - **Color:** fondo claro `--neutro-100`, tarjetas blancas, texto `--neutro-900`, banda de «Empieza
+    fácil» en `--marca-50`; botón principal índigo.
+  - **Tipografía:** solo Plus Jakarta Sans (la fuente de la app), peso 800, títulos de hasta 100 px con
+    tracking de -0.045em.
+  - **Forma:** botones de borde completamente redondo y etiquetas con esquinas de 14 px.
+  - **Portada:** a la izquierda el título y los botones; a la derecha dos etiquetas de producto, el
+    celular al centro y un comprobante blanco. Al escanear cada etiqueta, el producto vuela al celular,
+    aparece su línea en el comprobante y el total sube. El comprobante era el hilo de la página.
+  - **Empieza fácil:** el celular quedaba fijo con `position: sticky` y los pasos seguían su flujo
+    normal al lado. Una franja de lectura con `IntersectionObserver` marcaba el paso activo con una
+    barra índigo vertical. No usaba GSAP ni Lenis: era solo CSS y un observador.
+  - **Rendimiento:** 100 en Lighthouse celular (LCP 1,7 s) contra 94 de la B.

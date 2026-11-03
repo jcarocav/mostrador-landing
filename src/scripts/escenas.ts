@@ -1,4 +1,4 @@
-// Movimiento de la dirección B: se carga solo con movimiento permitido (ver b.astro).
+// Movimiento de la portada: se carga solo con movimiento permitido (ver src/pages/index.astro).
 // GSAP y ScrollTrigger para la portada y la escena fija; Lenis para el desplazamiento suave en PC.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

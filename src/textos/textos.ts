@@ -15,7 +15,6 @@ export const textos = {
     botonPlan: 'Arma tu plan',
     total: 'Total de la venta',
     escaneado: 'En el carrito',
-    comprobante: 'Comprobante',
     altVentaVacia: `Pantalla de venta de ${marca.nombre} en el celular, lista para escanear el primer producto`,
     altVentaCarrito: `Pantalla de venta de ${marca.nombre} en el celular con dos productos en el carrito y el botón Cobrar $14.986`,
   },
@@ -47,14 +46,7 @@ export const textos = {
     vuelto: 'Vuelto',
     enviado: 'Enviado por WhatsApp',
   },
-  enConstruccion: 'Estamos preparando esta página. Muy pronto vas a poder conocer todo lo que hace.',
   logoAlt: `Inicio de ${marca.nombre}`,
-  direcciones: {
-    titulo: 'Direcciones visuales',
-    bajada: 'Dos propuestas para la portada y la sección «Empieza fácil». Elige una.',
-    a: { nombre: 'Dirección A · Comprobante claro', texto: 'Fondo claro, la fuente de la app y el comprobante como hilo.' },
-    b: { nombre: 'Dirección B · Mostrador de noche', texto: 'Índigo profundo, números grandes y una escena fija al desplazarse.' },
-  },
   pie: {
     derechos: (anio: number) => `© ${anio} ${marca.nombre}. Hecho en Chile.`,
   },

@@ -2,8 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
 // Páginas del sitio. Al agregar una, se agrega aquí y queda cubierta por todas las pruebas.
-const PAGINAS = ['/', '/direcciones/', '/direcciones/a/', '/direcciones/b/'];
-const PAGINA_ESCENA = '/direcciones/b/';
+const PAGINAS = ['/'];
+const PAGINA_ESCENA = '/';
 
 const ETIQUETAS_WCAG_21_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const GRAVES = new Set(['serious', 'critical']);

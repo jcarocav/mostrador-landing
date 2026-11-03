@@ -1,4 +1,4 @@
-// Utilidades de movimiento compartidas por las dos direcciones.
+// Utilidades de movimiento de la portada.
 
 /** Curvas de emil-design-eng: salida fuerte (entradas) y entrada-salida fuerte (traslados). */
 export const CURVA_SALIDA = 'cubic-bezier(0.23, 1, 0.32, 1)';
@@ -17,21 +17,6 @@ export function hayMovimiento() {
 /** El script empezó: se cancela el respaldo que deja todo a la vista a los 4 segundos. */
 export function cancelarRespaldo() {
   clearTimeout((window as unknown as { __respaldoMovimiento?: number }).__respaldoMovimiento);
-}
-
-/** Sube un monto en pantalla de «desde» a «hasta» con salida suave, sin rebote. */
-export function contar(el: HTMLElement, desde: number, hasta: number, duracion = 380) {
-  return new Promise<void>((listo) => {
-    const inicio = performance.now();
-    const paso = (ahora: number) => {
-      const t = Math.min(1, (ahora - inicio) / duracion);
-      const suave = 1 - Math.pow(1 - t, 3);
-      el.textContent = pesos(Math.round(desde + (hasta - desde) * suave));
-      if (t < 1) requestAnimationFrame(paso);
-      else listo();
-    };
-    requestAnimationFrame(paso);
-  });
 }
 
 /** Una copia del nombre del producto viaja de la etiqueta a la pantalla del celular y se desvanece. */
