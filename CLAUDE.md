@@ -48,7 +48,7 @@ Documentos: `DECISIONES.md` (decisiones numeradas) y este archivo.
    pedirla se dice qué servicio, cuántas veces y el costo estimado. No crear cuentas ni claves en
    proveedores.
 8. **Accesibilidad WCAG 2.1 AA:** axe sin violaciones graves (`serious` o `critical`) en celular y PC,
-   con y sin movimiento reducido. Lighthouse en celular: rendimiento ≥ 90 y accesibilidad ≥ 95. Texto
+   con y sin movimiento reducido. Lighthouse en celular: rendimiento ≥ 95 y accesibilidad ≥ 95. Texto
    principal de 16 px como mínimo (14 px solo en datos secundarios), contraste AA, todo usable con
    teclado y con foco visible, botones fáciles de tocar (44 px) y nada comunicado solo con color. Las
    pruebas de accesibilidad nunca se debilitan, se saltan ni se borran: una prueba en rojo se arregla

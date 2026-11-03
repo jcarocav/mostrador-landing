@@ -75,6 +75,16 @@ test.describe('escena fija de «Empieza fácil» con movimiento', () => {
     expect(visibles).toBe(1);
   });
 
+  test('el paso a paso se recorre con un desplazamiento corto en el celular', async ({ page }, info) => {
+    await recorrer(page);
+    const pantallas = await page.evaluate(() => {
+      const contenedor = document.querySelector('[data-empieza]')!.parentElement!;
+      return (contenedor.offsetHeight - window.innerHeight) / window.innerHeight;
+    });
+    expect(pantallas).toBeGreaterThan(0);
+    expect(pantallas).toBeLessThanOrEqual(info.project.name === 'celular' ? 1 : 2.6);
+  });
+
   // Con la página arriba, los pasos 2 y 3 están en opacidad 0 y axe no los ve: se detiene en cada uno.
   test('axe WCAG 2.1 AA en cada paso, en reposo', async ({ page }, info) => {
     const total = await page.locator('[data-paso]').count();

@@ -29,6 +29,7 @@ async function portada(escena: HTMLElement) {
   const carrito = escena.querySelector<HTMLElement>('.pantalla[data-pantalla="carrito"]')!;
   const contador = { valor: 0 };
 
+  escena.classList.add('animando');
   total.textContent = pesos(0);
   await document.fonts?.ready;
   await esperar(150);
@@ -58,6 +59,9 @@ async function portada(escena: HTMLElement) {
   );
   escena.classList.add('terminada');
 }
+
+/** Pantallas de desplazamiento por paso. En el celular cada paso avanza con un solo deslizamiento del dedo. */
+const tramoPorPaso = () => (window.matchMedia('(min-width: 1024px)').matches ? 0.85 : 0.3);
 
 function empieza(seccion: HTMLElement) {
   const pasos = [...seccion.querySelectorAll<HTMLElement>('[data-paso]')];
@@ -99,7 +103,7 @@ function empieza(seccion: HTMLElement) {
   ScrollTrigger.create({
     trigger: seccion,
     start: 'top top',
-    end: () => `+=${window.innerHeight * 0.85 * pasos.length}`,
+    end: () => `+=${window.innerHeight * tramoPorPaso() * pasos.length}`,
     pin: true,
     anticipatePin: 1,
     invalidateOnRefresh: true,

@@ -1,8 +1,6 @@
 ---
 // Portada de la landing: dirección B, «Mostrador de noche» (DECISIONES.md #11).
-import '@fontsource-variable/plus-jakarta-sans/wght.css';
-import '@fontsource-variable/bricolage-grotesque/wght.css';
-import bricolage from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+import { getImage } from 'astro:assets';
 import ventaVacia from '../assets/app/venta-vacia-celular.png';
 import ventaCarrito from '../assets/app/venta-carrito-celular.png';
 import cobroVuelto from '../assets/app/cobro-vuelto-celular.png';
@@ -10,6 +8,7 @@ import comprobante from '../assets/app/comprobante-whatsapp-celular.png';
 import Etiqueta from '../componentes/Etiqueta.astro';
 import Telefono from '../componentes/Telefono.astro';
 import { ventaDemo } from '../config/demo';
+import { ANCHOS_CELULAR, CALIDAD_CAPTURA } from '../config/imagenes';
 import { formatoPesos } from '../config/precios';
 import Base from '../layouts/Base.astro';
 import { marca } from '../marca/marca';
@@ -19,10 +18,14 @@ const t = textos.portada;
 const e = textos.empiezaFacil;
 const imagenesPasos = [ventaCarrito, cobroVuelto, comprobante];
 const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPasos[i], alt: p.alt }));
+
+// El celular de la portada es el LCP: su primera pantalla se precarga con el mismo srcset de la imagen.
+const tamanosPortada = '(min-width: 1024px) 300px, 54vw';
+const lcp = await getImage({ src: ventaVacia, widths: ANCHOS_CELULAR, format: 'webp', quality: CALIDAD_CAPTURA });
 ---
 
-<Base precargar={[bricolage]} colorTema={marca.colores.marca[950]}>
-  <div class="dir-b">
+<Base imagenPrincipal={{ srcset: lcp.srcSet.attribute, sizes: tamanosPortada }}>
+  <div>
     <header class="barra marco">
       <a class="marca" href="/" aria-label={textos.logoAlt}>
         <span class="logo" set:html={marca.logoSvg} />
@@ -50,9 +53,9 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
             <Telefono
               class="portada-telefono"
               prioridad
-              cargarTodas
               activa={1}
-              tamanos="(min-width: 1024px) 300px, 54vw"
+              primera={0}
+              tamanos={tamanosPortada}
               pantallas={[
                 { id: 'vacia', src: ventaVacia, alt: t.altVentaVacia },
                 { id: 'carrito', src: ventaCarrito, alt: t.altVentaCarrito },
@@ -138,48 +141,6 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   </div>
 </Base>
 
-<style is:global>
-  .dir-b {
-    --fuente: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --fuente-titulo: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
-    --color-fondo: var(--marca-950);
-    --color-texto: #ffffff;
-    --color-texto-suave: var(--marca-200);
-    --color-superficie: var(--marca-900);
-    --color-foco: var(--marca-300);
-    --color-etiqueta: var(--marca-900);
-    --color-etiqueta-texto: #ffffff;
-    --color-etiqueta-estado: var(--exito-300);
-    --color-haz: var(--marca-300);
-    --color-campo: var(--marca-900);
-
-    font-family: var(--fuente);
-    background: var(--color-fondo);
-    color: var(--color-texto);
-  }
-
-  .dir-b .cifra {
-    font-variant-numeric: tabular-nums;
-  }
-
-  .dir-b .telefono {
-    --bisel: var(--neutro-950);
-  }
-
-  .dir-b .ficha-vuelo {
-    position: absolute;
-    z-index: 5;
-    padding: 8px 14px;
-    border-radius: 2px;
-    background: #ffffff;
-    color: var(--marca-950);
-    font-size: 1rem;
-    font-weight: 700;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-</style>
-
 <style>
   .marco {
     width: 100%;
@@ -202,9 +163,9 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     gap: 10px;
     min-height: 44px;
     color: var(--color-texto);
-    font-family: var(--fuente-titulo);
     font-size: 1.375rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
     text-decoration: none;
   }
 
@@ -262,22 +223,22 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   }
 
   .boton-primario {
-    background: #ffffff;
-    color: var(--marca-950);
+    background: var(--color-accion);
+    color: var(--color-accion-texto);
   }
 
   .boton-secundario {
-    background: var(--marca-800);
-    color: #ffffff;
+    background: var(--color-secundario);
+    color: var(--color-texto);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .boton-primario:hover {
-      background: var(--marca-100);
+      background: var(--color-accion-encima);
     }
 
     .boton-secundario:hover {
-      background: var(--marca-700);
+      background: var(--color-secundario-encima);
     }
   }
 
@@ -410,6 +371,12 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     opacity: 0;
   }
 
+  /* Con movimiento, las imágenes que aún no se ven no se piden: el navegador no baja un lazy oculto. */
+  :global(.js-movimiento) .portada-escena:not(.animando) :global(.pantalla[data-pantalla='carrito']),
+  :global(.js-movimiento) .empieza:not(:global(.escena-fija)) .paso :global(.paso-telefono) {
+    display: none;
+  }
+
   /* Empieza fácil (sin movimiento: los tres pasos uno bajo otro, cada uno con su pantalla) */
   .empieza {
     background: var(--color-campo);
@@ -489,7 +456,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
   .billete {
     padding: 10px 16px;
     border-radius: 2px;
-    background: var(--marca-800);
+    background: var(--color-secundario);
     font-size: 1.0625rem;
     font-weight: 700;
   }
@@ -498,7 +465,7 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     display: grid;
     flex-basis: 100%;
     margin: 12px 0 0;
-    color: var(--exito-300);
+    color: var(--color-exito-suave);
   }
 
   .vuelto span {
@@ -521,8 +488,8 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
     margin-top: 24px;
     padding: 10px 16px;
     border-radius: 2px;
-    background: var(--exito-800);
-    color: #ffffff;
+    background: var(--color-exito-fondo);
+    color: var(--color-texto);
     font-size: 1.0625rem;
     font-weight: 700;
   }
@@ -681,10 +648,20 @@ const pantallasPasos = e.pasos.map((p, i) => ({ id: `paso-${i}`, src: imagenesPa
 <script>
   import { cancelarRespaldo, hayMovimiento } from '../scripts/movimiento';
 
-  if (hayMovimiento()) {
-    cancelarRespaldo();
+  // El movimiento llega después de la primera pintura: sus 130 KB no deben competir con el LCP. El respaldo
+  // de 4 s de Base.astro sigue corriendo hasta que el script llegue: si llega tarde, la página ya quedó completa.
+  const arrancar = () =>
     import('../scripts/escenas')
-      .then((m) => m.iniciar())
+      .then((m) => {
+        if (!hayMovimiento()) return;
+        cancelarRespaldo();
+        m.iniciar();
+      })
       .catch(() => document.documentElement.classList.remove('js-movimiento'));
+
+  if (hayMovimiento()) {
+    const alCargar = () => ('requestIdleCallback' in window ? requestIdleCallback(arrancar, { timeout: 800 }) : setTimeout(arrancar, 200));
+    if (document.readyState === 'complete') alCargar();
+    else addEventListener('load', alCargar, { once: true });
   }
 </script>

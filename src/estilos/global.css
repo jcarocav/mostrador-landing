@@ -1,21 +1,40 @@
 /* Tokens del tema. Los colores vienen solo de las escalas de src/marca/marca.ts (--marca-*,
    --exito-*, --neutro-*); los componentes usan estos nombres de rol, nunca valores fijos. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --color-fondo: var(--neutro-50);
-  --color-superficie: #ffffff;
-  --color-texto: var(--neutro-900);
-  --color-texto-suave: var(--neutro-600);
-  --color-accion: var(--marca-600);
-  --color-accion-encima: var(--marca-700);
-  --color-accion-texto: #ffffff;
-  --color-foco: var(--marca-500);
+  /* «Mostrador de noche» (DECISIONES.md #11): índigo profundo. */
+  --color-fondo: var(--marca-950);
+  --color-campo: var(--marca-900);
+  --color-superficie: var(--marca-900);
+  --color-superficie-alta: var(--marca-800);
+  --color-borde: var(--marca-700);
+  --color-texto: #ffffff;
+  --color-texto-suave: var(--marca-200);
+  --color-accion: #ffffff;
+  --color-accion-encima: var(--marca-100);
+  --color-accion-texto: var(--marca-950);
+  --color-secundario: var(--marca-800);
+  --color-secundario-encima: var(--marca-700);
+  --color-foco: var(--marca-300);
   /* Verde: solo cobrar y éxito. */
   --color-cobrar: var(--exito-600);
+  --color-cobrar-encima: var(--exito-700);
   --color-cobrar-texto: #ffffff;
+  --color-exito-suave: var(--exito-300);
+  --color-exito-fondo: var(--exito-800);
+  /* Pantallas claras dentro del sitio oscuro: la ficha que vuela y el marco del celular. */
+  --color-ficha: #ffffff;
+  --color-ficha-texto: var(--marca-950);
+  --bisel: var(--neutro-950);
+  --color-etiqueta: var(--marca-900);
+  --color-etiqueta-texto: #ffffff;
+  --color-etiqueta-estado: var(--exito-300);
+  --color-haz: var(--marca-300);
 
-  --fuente: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Bricolage Grotesque solo para títulos y cifras grandes; todo lo demás con la fuente de la app. */
+  --fuente: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-titulo: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
   --margen: clamp(16px, 4vw, 48px);
   --ancho-max: 1200px;
 
@@ -69,6 +88,24 @@ svg {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.cifra {
+  font-variant-numeric: tabular-nums;
+}
+
+/* La copia del producto que viaja al celular: la crea el script, por eso es global. */
+.ficha-vuelo {
+  position: absolute;
+  z-index: 5;
+  padding: 8px 14px;
+  border-radius: 2px;
+  background: var(--color-ficha);
+  color: var(--color-ficha-texto);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 /* Saltos de línea que solo valen en pantallas chicas (títulos de tres líneas cortas en celular). */

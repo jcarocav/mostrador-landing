@@ -48,7 +48,7 @@ jobs:
       - name: Accesibilidad con axe (WCAG 2.1 AA) y sin terceros
         run: npm run test:a11y
 
-      - name: Lighthouse en celular (rendimiento ≥ 90)
+      - name: Lighthouse en celular (rendimiento ≥ 95)
         run: npm run lighthouse
 
       - name: Guardar informes

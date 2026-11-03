@@ -1,10 +1,11 @@
-// Venta de ejemplo de la portada: los mismos productos y montos que muestran las capturas reales
-// de la app (src/assets/app/), para que la animación y la pantalla digan lo mismo.
+// Venta de ejemplo de la portada: los mismos productos y montos que muestran las capturas reales de
+// la app (src/assets/app/), para que la animación y la pantalla digan lo mismo. El negocio de las
+// capturas, «Almacén Peumo Azul», es inventado (DECISIONES.md #14).
 export const ventaDemo = {
   productos: [
-    { nombre: 'Hueso de carnaza', codigo: 'CAJA-HUESO', precio: 1996, barras: '7801234500017' },
-    { nombre: 'Arena sanitaria 10 kg', codigo: 'CAJA-ARENA', precio: 12990, barras: '7801234500024' },
+    { nombre: 'Arroz grado 2, 1 kg', codigo: 'ARROZ', precio: 1590, barras: '7809990010000' },
+    { nombre: 'Aceite vegetal 1 L', codigo: 'ACEITE', precio: 3290, barras: '7809990010007' },
   ],
-  total: 14986,
-  cobro: { recibido: 25000, total: 22180, vuelto: 2820 },
+  total: 4880,
+  cobro: { recibido: 10000, total: 4880, vuelto: 5120 },
 };

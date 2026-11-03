@@ -16,7 +16,7 @@ export const textos = {
     total: 'Total de la venta',
     escaneado: 'En el carrito',
     altVentaVacia: `Pantalla de venta de ${marca.nombre} en el celular, lista para escanear el primer producto`,
-    altVentaCarrito: `Pantalla de venta de ${marca.nombre} en el celular con dos productos en el carrito y el botón Cobrar $14.986`,
+    altVentaCarrito: `Pantalla de venta de ${marca.nombre} en el celular con dos productos en el carrito y el botón Cobrar $4.880`,
   },
   empiezaFacil: {
     titulo: 'Empieza fácil',
@@ -33,7 +33,7 @@ export const textos = {
         titulo: 'Cobra y da el vuelto',
         texto:
           'Efectivo, débito, crédito o transferencia. Suma los billetes que te entregan y el vuelto se calcula solo, con el redondeo legal.',
-        alt: 'Pantalla de cobro en efectivo: recibido $25.000 y vuelto $2.820',
+        alt: 'Pantalla de cobro en efectivo: recibido $10.000 y vuelto $5.120',
       },
       {
         corto: 'Envía',
@@ -42,7 +42,7 @@ export const textos = {
         alt: 'Comprobante de la venta con los botones para compartirlo por WhatsApp o correo',
       },
     ],
-    billetes: ['+ $20.000', '+ $5.000'],
+    billetes: ['+ $5.000', '+ $5.000'],
     vuelto: 'Vuelto',
     enviado: 'Enviado por WhatsApp',
   },
